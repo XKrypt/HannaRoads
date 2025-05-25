@@ -34,7 +34,7 @@ public class HannaTerrainController : MonoBehaviour
         Vector3 center = worldPoint;
 
 
-        TerrainVector posInTerrainSpace = ConvertFromWordPositionToTerrainPosition(terrain, center);
+        TerrainVector2 posInTerrainSpace = ConvertFromWordPositionToTerrainPosition(terrain, center);
 
         // Define tamanho do quadrado em volta do ponto central
         int halfSize = Mathf.RoundToInt((radius / data.size.x) * (resolution - 1));
@@ -92,7 +92,7 @@ public class HannaTerrainController : MonoBehaviour
         Vector3 center = worldPoint;
 
 
-        TerrainVector posInTerrainSpace = ConvertFromWordPositionToTerrainPosition(terrain, center);
+        TerrainVector2 posInTerrainSpace = ConvertFromWordPositionToTerrainPosition(terrain, center);
 
         // Define tamanho do quadrado em volta do ponto central
         int halfSize = Mathf.RoundToInt((radius / data.size.x) * (resolution - 1));
@@ -155,7 +155,7 @@ public class HannaTerrainController : MonoBehaviour
         Vector3 center = worldPoint;
 
         // Converte a posição do mundo para a grade do terreno
-        TerrainVector posInTerrainSpace = ConvertFromWordPositionToTerrainPosition(terrain, center);
+        TerrainVector2 posInTerrainSpace = ConvertFromWordPositionToTerrainPosition(terrain, center);
 
         // Define tamanho da área a ser afetada
         int halfSize = Mathf.RoundToInt((radius / data.size.x) * (resolution - 1));
@@ -193,13 +193,12 @@ public class HannaTerrainController : MonoBehaviour
         bool[,] affectedCells,
         float width,
         OrientedPoint bezierPoint,
-        float bottomMargin)
+        float bottomMargin,
+        Vector3 terrainSize,
+        int heightmapRes,
+        Vector3 terrainPosition
+        )
     {
-        if (!terrain) return;
-
-        TerrainData data = terrain.terrainData;
-        int heightmapRes = data.heightmapResolution;
-        Vector3 terrainPos = terrain.transform.position;
 
         Vector3 leftWorld = bezierPoint.LocalSpace(Vector3.left * (width / 2f));
         Vector3 rightWorld = bezierPoint.LocalSpace(Vector3.right * (width / 2f));
@@ -210,15 +209,15 @@ public class HannaTerrainController : MonoBehaviour
             float lerpT = j / (float)sampleCount;
             Vector3 worldPoint = Vector3.Lerp(leftWorld, rightWorld, lerpT);
 
-            int x = Mathf.RoundToInt(((worldPoint.x - terrainPos.x) / data.size.x) * (heightmapRes - 1));
-            int z = Mathf.RoundToInt(((worldPoint.z - terrainPos.z) / data.size.z) * (heightmapRes - 1));
+            int x = Mathf.RoundToInt(((worldPoint.x - terrainPosition.x) / terrainSize.x) * (heightmapRes - 1));
+            int z = Mathf.RoundToInt(((worldPoint.z - terrainPosition.z) / terrainSize.z) * (heightmapRes - 1));
 
             if (x >= 0 && x < heightmapRes && z >= 0 && z < heightmapRes)
             {
-                float rawHeight = worldPoint.y - terrainPos.y;
-                
-                float normalizedHeight = (rawHeight - bottomMargin) / data.size.y;
-                Debug.Log(normalizedHeight);
+                float rawHeight = worldPoint.y - terrainPosition.y;
+
+                float normalizedHeight = (rawHeight - bottomMargin) / terrainSize.y;
+
 
                 if (!affectedCells[z, x] || normalizedHeight < accumulatedHeights[z, x])
                 {
@@ -239,11 +238,11 @@ public class HannaTerrainController : MonoBehaviour
         int heightmapRes = data.heightmapResolution;
 
 
-        int lateraSegments = Mathf.CeilToInt(width / 1.0f);
+        int lateralSegments = Mathf.CeilToInt(width / 1.0f);
 
-        for (int j = -lateraSegments / 2; j <= lateraSegments; j++)
+        for (int j = -lateralSegments / 2; j <= lateralSegments; j++)
         {
-            Vector3 offset = Vector3.right * j * (width / lateraSegments);
+            Vector3 offset = Vector3.right * j * (width / lateralSegments);
 
             Vector3 worldPoint = bezierPoint.LocalSpace(offset);
 
@@ -273,7 +272,7 @@ public class HannaTerrainController : MonoBehaviour
     }
 
 
-    public TerrainVector ConvertFromWordPositionToTerrainPosition(Terrain terrain, Vector3 center)
+    public TerrainVector2 ConvertFromWordPositionToTerrainPosition(Terrain terrain, Vector3 center)
     {
         Vector3 terrainPos = terrain.transform.position;
         TerrainData terrainData = terrain.terrainData;
@@ -281,7 +280,7 @@ public class HannaTerrainController : MonoBehaviour
         int xCenter = Mathf.RoundToInt(((center.x - terrainPos.x) / terrainData.size.x) * (resolution - 1));
         int zCenter = Mathf.RoundToInt(((center.z - terrainPos.z) / terrainData.size.z) * (resolution - 1));
 
-        return new TerrainVector()
+        return new TerrainVector2()
         {
             x = xCenter,
             z = zCenter
@@ -301,9 +300,8 @@ public class HannaTerrainController : MonoBehaviour
 
 
 }
-public struct TerrainVector
+public struct TerrainVector2
 {
     public int x;
     public int z;
 }
-

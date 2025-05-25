@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.EditorCoroutines.Editor;
+using UnityEditor;
 using UnityEngine;
 
 
@@ -15,6 +17,8 @@ namespace HannaRoads
 
         public RSegment activeSegment;
         public HannaIntersection activeIntersection;
+
+        public int maxThreadsPerSegment;
 
 
         public RSegment lastRSegment;
@@ -41,6 +45,35 @@ namespace HannaRoads
                 }
                 item.Generate();
             }
+        }
+
+        public void AlignTerrainForAllSegments()
+        {
+            EditorCoroutineUtility.StartCoroutineOwnerless(UpdateAllRoadsTerrains());
+        }
+
+
+        IEnumerator UpdateAllRoadsTerrains()
+        {
+            int count = 0;
+            while (count < rSegments.Count)
+            {
+                if (rSegments[count].ignoreFromRoadSystemTerrainUpdate)
+                {
+                    count++;
+                    yield return null;
+                }
+                rSegments[count].AlignTerrain();
+                EditorUtility.DisplayProgressBar("Updating Roads", $"Updating {rSegments[count].name}", count / (float)rSegments.Count);
+
+                while (rSegments[count].isAligningTerrain)
+                {
+                    yield return null;
+                }
+                count++;
+                yield return null;
+            }
+            EditorUtility.ClearProgressBar();
         }
 
         public RSegment SpawnRoad(Vector3 position)
@@ -103,7 +136,7 @@ namespace HannaRoads
             return referencePoint.GetComponent<ReferencePoint>();
         }
 
-        
+
         public void ClearRSegments(RSegment rSegment)
         {
             rSegments.Clear();

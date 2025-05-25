@@ -158,8 +158,8 @@ namespace HannaRoads
         }
 
         private void OnDrawGizmos()
-        {
-
+        {  
+            Gizmos.DrawCube(transform.position + (Vector3.up), new Vector3(0.2f,2,0.2f));
         }
 
         public void UpdateMeshVerts()

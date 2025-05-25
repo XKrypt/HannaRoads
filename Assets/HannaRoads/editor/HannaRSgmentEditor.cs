@@ -28,12 +28,13 @@ namespace HannaRoads.HannaEditor
         {
 
 
-             EditorGUILayout.LabelField("Shift + E : Connect to active intersection");
+            EditorGUILayout.LabelField("Shift + E : Connect to active intersection");
             EditorGUI.BeginChangeCheck();
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("width");
             rSegment.width = EditorGUILayout.Slider(rSegment.width, 0.02f, 20);
             EditorGUILayout.EndHorizontal();
+
 
 
             EditorGUILayout.BeginHorizontal();
@@ -79,6 +80,16 @@ namespace HannaRoads.HannaEditor
             EditorGUILayout.EndHorizontal();
 
 
+            EditorGUILayout.Space(2);
+            EditorGUILayout.HelpBox("If this is marked, the terrain will not be aligned with this segment when \"Align all roads with terrain\" button is pressed", MessageType.Info);
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("Ignore this segment from being updated in terrain global alignment");
+            rSegment.ignoreFromRoadSystemTerrainUpdate = EditorGUILayout.Toggle(rSegment.ignoreFromRoadSystemTerrainUpdate);
+            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.Space(2);
+
+
+
             // EditorGUILayout.BeginHorizontal();
             // EditorGUILayout.LabelField("Align  max distance");
             // rSegment.maxAlignDistance = EditorGUILayout.Slider(rSegment.maxAlignDistance, rSegment.minAlignDistance + 0.05f, rSegment.terrainAlignRadius);
@@ -89,23 +100,35 @@ namespace HannaRoads.HannaEditor
             // rSegment.minAlignDistance = EditorGUILayout.Slider(rSegment.minAlignDistance, 0, rSegment.maxAlignDistance - 0.05f);
             // EditorGUILayout.EndHorizontal();
 
-            // EditorGUILayout.BeginHorizontal();
-            // EditorGUILayout.LabelField("Bottom margin");
-            // rSegment.terrainBottomMargin = EditorGUILayout.Slider(rSegment.terrainBottomMargin, -1, 1);
-            // EditorGUILayout.EndHorizontal();
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("Bottom margin");
+            rSegment.terrainBottomMargin = EditorGUILayout.Slider(rSegment.terrainBottomMargin, -1, 1);
+            EditorGUILayout.EndHorizontal();
 
 
             // EditorGUILayout.BeginHorizontal();
             // rSegment.terrainAlignCurve = EditorGUILayout.CurveField("Align smoothness curve", rSegment.terrainAlignCurve);
             // EditorGUILayout.EndHorizontal();
 
-
             if (GUILayout.Button("Align terrain"))
             {
-                rSegment.AlignTerrain();
+                if (!rSegment.isAligningTerrain)
+                {
+                    rSegment.AlignTerrain();
+                }
+                else
+                {
+                    Debug.LogWarning("Operation is already in process, wait for it ends to run again");
+                }
             }
 
+
+            Rect rect = GUILayoutUtility.GetRect(18, 18, "TextField");
+            EditorGUI.ProgressBar(rect, rSegment.alignTerrainProgress, $"{(int)(rSegment.alignTerrainProgress)}%");
+
+
             GUILayout.Space(10);
+
 
 
             EditorGUILayout.LabelField("Reference points", TitleStyle());
@@ -153,7 +176,24 @@ namespace HannaRoads.HannaEditor
             }
 
             serializedObject.ApplyModifiedProperties();
+
+            if (rSegment.isAligningTerrain)
+            {
+                Repaint();
+
+                previousAligning = true;
+            }
+
+            if (!rSegment.isAligningTerrain && previousAligning)
+            {
+                Repaint();
+
+                previousAligning = false;
+            }
         }
+
+
+        bool previousAligning;
 
 
         public void UpdateRoadLines()
@@ -231,7 +271,7 @@ namespace HannaRoads.HannaEditor
                 roadLine.verticalProfile = EditorGUILayout.CurveField("Vertical profile", roadLine.verticalProfile);
                 EditorGUILayout.EndHorizontal();
 
-                                EditorGUILayout.BeginHorizontal();
+                EditorGUILayout.BeginHorizontal();
                 EditorGUILayout.LabelField("Vertical profile multiplayer");
                 roadLine.verticalProfileMultiplayer = EditorGUILayout.Slider(roadLine.verticalProfileMultiplayer, -1, 1);
                 EditorGUILayout.EndHorizontal();

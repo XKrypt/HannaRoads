@@ -1,7 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading;
+using Unity.EditorCoroutines.Editor;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
@@ -22,6 +25,8 @@ namespace HannaRoads
 
         public HannaIntersection endIntersection;
         public HannaIntersection startIntersection;
+
+        public bool ignoreFromRoadSystemTerrainUpdate;
 
 
         public List<RoadObject> objectsAlongRoad = new List<RoadObject>();
@@ -53,7 +58,7 @@ namespace HannaRoads
         public int sliceResolution = 2;
 
         public List<Vector3> vertsWorldPos = new List<Vector3>();
-
+        public List<Terrain> terrainsBellowRoad = new List<Terrain>();
         private void OnDrawGizmos()
         {
             Handles.DrawBezier(start.position, end.position,
@@ -117,46 +122,146 @@ namespace HannaRoads
 
         public void AlignTerrain()
         {
-            Terrain[] terrains = FindObjectsByType<Terrain>(FindObjectsSortMode.None);
+            isAligningTerrain = true;
+            EditorCoroutineUtility.StartCoroutineOwnerless(AlignTerrainOperation());
+        }
+        public bool isAligningTerrain = false;
 
-            foreach (var item in terrains)
+
+        public float alignTerrainProgress = 0;
+        IEnumerator AlignTerrainOperation()
+        {
+
+            List<Terrain> terrainsToOperate = FindObjectsByType<Terrain>(FindObjectsSortMode.None).ToList();
+
+            List<ThreadSegment> threads = new List<ThreadSegment>();
+
+
+            int currentTerrain = 0;
+
+
+            while (currentTerrain < terrainsToOperate.Count)
             {
+                Terrain item = terrainsToOperate[currentTerrain];
+
+                ThreadSegment threadSegment = new ThreadSegment();
                 if (item.GetComponent<HannaTerrainController>() == null)
                 {
                     item.AddComponent<HannaTerrainController>();
                 }
 
-                HannaTerrainController hanna = item.GetComponent<HannaTerrainController>();
-                TerrainData data = item.terrainData;
-                int heightmapRes = data.heightmapResolution;
+                threadSegment.hanna = item.GetComponent<HannaTerrainController>();
 
-                float[,] baseHeights = data.GetHeights(0, 0, heightmapRes, heightmapRes);
-                float[,] accumulatedHeights = (float[,])baseHeights.Clone(); // start from current
-                bool[,] affected = new bool[heightmapRes, heightmapRes];
+                //Get terrain settings first
+                threadSegment.data = item.terrainData;
+                Vector3 terrainSizeData = threadSegment.data.size;
+                int heightmapRes = threadSegment.data.heightmapResolution;
 
-                for (int i = 0; i <= 200; i++)
+
+                //Generate data to process
+                threadSegment.baseHeights = threadSegment.data.GetHeights(0, 0, heightmapRes, heightmapRes);
+                threadSegment.accumulatedHeights = (float[,])threadSegment.baseHeights.Clone(); // start from current
+                Vector3 terrainPosition = item.transform.position;
+
+                // The amount of postions of terrain affected;
+                threadSegment.affected = new bool[heightmapRes, heightmapRes];
+
+                //List of oriented points to process along the road (bezier curve)
+                OrientedPoint[] orientedPoints = new OrientedPoint[201];
+
+                for (int i = 0; i < orientedPoints.Length; i++)
                 {
-                    float t = i / 200f;
-                    OrientedPoint point = GetBezierPointGlobal(t);
-                    hanna.RampTerrainAlongBezier(accumulatedHeights, affected, terrainAlignRadius, point, terrainBottomMargin);
+                    float t = i / 201f;
+                    orientedPoints[i] = GetBezierPointGlobal(t);
+                }
+                int threadRunning = NumberOfThreadsRunning(threads);
+                if (threadRunning >= hannaRoad.maxThreadsPerSegment)
+                {
+
+                    yield return null;
                 }
 
-                // Apply only where affected
-                for (int x = 0; x < heightmapRes; x++)
+                //Create thread to process terrain data.
+                Thread thread = new Thread(() =>
                 {
-                    for (int z = 0; z < heightmapRes; z++)
+                    for (int i = 0; i <= 200; i++)
                     {
-                        if (affected[z, x])
+                        float t = i / 200f;
+                        OrientedPoint point = orientedPoints[i];
+                        threadSegment.hanna.RampTerrainAlongBezier(threadSegment.accumulatedHeights, threadSegment.affected, terrainAlignRadius, point, terrainBottomMargin, terrainSizeData, heightmapRes, terrainPosition);
+                        alignTerrainProgress += 100f / (terrainsToOperate.Count * 200f);
+                    }
+
+                    // Apply only where affected
+                    for (int x = 0; x < heightmapRes; x++)
+                    {
+                        for (int z = 0; z < heightmapRes; z++)
                         {
-                            baseHeights[z, x] = accumulatedHeights[z, x];
+                            if (threadSegment.affected[z, x])
+                            {
+                                threadSegment.baseHeights[z, x] = threadSegment.accumulatedHeights[z, x];
+                            }
                         }
                     }
-                }
+                });
 
-                data.SetHeights(0, 0, baseHeights);
+                //Add to list
+
+                threadSegment.thread = thread;
+                threads.Add(threadSegment);
+                thread.Start();
+
+                currentTerrain++;
+                yield return null;
+            }
+
+
+            //While have threads to process the coroutine will not stop;
+            while (DetectIfAreThreadsRunning(threads))
+            {
+                yield return null;
+            }
+            ApplyResults(threads);
+            isAligningTerrain = false;
+            alignTerrainProgress = 0;
+
+
+
+        }
+
+
+        void ApplyResults(List<ThreadSegment> threads)
+        {
+            foreach (var item in threads)
+            {
+                item.data.SetHeights(0, 0, item.baseHeights);
             }
         }
 
+        int NumberOfThreadsRunning(List<ThreadSegment> threads)
+        {
+            int count = 0;
+
+            foreach (var item in threads)
+            {
+                if (item.thread.IsAlive)
+                {
+                    count++;
+                }
+            }
+
+            return count;
+        }
+
+        bool DetectIfAreThreadsRunning(List<ThreadSegment> threads)
+        {
+            foreach (var thread in threads)
+            {
+                if (thread.thread.IsAlive) return true;
+            }
+
+            return false;
+        }
         void GenerateMesh(Mesh mesh)
         {
 
@@ -281,7 +386,7 @@ namespace HannaRoads
         void GenerateMeshNVerticesWay(Mesh mesh)
         {
 
-
+            terrainsBellowRoad.Clear();
             if (mesh == null)
             {
 
@@ -352,13 +457,13 @@ namespace HannaRoads
                 {
                     float sliceT = s / (float)(sliceResolution - 1); // de 0 (left) até 1 (right)
                     float verticalProfileEnd = verticalProfile.Evaluate(sliceT);
-                    float finalVerticalMultiplier  = verticalProfileMultiplayer;
+                    float finalVerticalMultiplier = verticalProfileMultiplayer;
                     if (endRef.rSegment != null)
                     {
                         float A = verticalProfile.Evaluate(sliceT);
                         float B = endRef.rSegment.verticalProfile.Evaluate(sliceT);
                         verticalProfileEnd = Mathf.Lerp(A, B, t);
-                        finalVerticalMultiplier = Mathf.Lerp(verticalProfileMultiplayer, endRef.rSegment.verticalProfileMultiplayer,t);
+                        finalVerticalMultiplier = Mathf.Lerp(verticalProfileMultiplayer, endRef.rSegment.verticalProfileMultiplayer, t);
                     }
 
                     // Largura total da pista:
@@ -380,6 +485,13 @@ namespace HannaRoads
                     uvs.Add(new Vector2(sliceT, t * GetApproxLength(resolution) / uSpan)); // UVs bem mapeados
                 }
 
+                // Vector3 rightVertex = Vector3.right * (terrainAlignRadius / 2);
+                // Vector3 leftVertex = Vector3.left * (terrainAlignRadius / 2);
+                // Vector3 vA = bezierPoint.LocalSpace(rightVertex);
+                // Vector3 vB = bezierPoint.LocalSpace(leftVertex);
+
+                // DetectTerrain(vA);
+                // DetectTerrain(vB);
             }
 
 
@@ -423,6 +535,19 @@ namespace HannaRoads
             }
 
 
+        }
+
+        public void DetectTerrain(Vector3 point)
+        {
+            Vector3 transformPoint = transform.TransformPoint(point);
+            RaycastHit hit;
+            if (Physics.Raycast(transformPoint, Vector3.down, out hit))
+            {
+                if (!terrainsBellowRoad.Contains(hit.collider.GetComponent<Terrain>()))
+                {
+                    terrainsBellowRoad.Add(hit.collider.GetComponent<Terrain>());
+                }
+            }
         }
 
 
@@ -766,6 +891,23 @@ namespace HannaRoads
 
         public AnimationCurve verticalProfile;
     }
+
+
+}
+
+public class ThreadSegment
+{
+    public Terrain terrain;
+    public TerrainData data;
+
+    public Thread thread;
+
+    public float[,] baseHeights;
+    public float[,] accumulatedHeights;
+    public bool[,] affected;
+
+
+    public HannaTerrainController hanna;
 
 
 }
