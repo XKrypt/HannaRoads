@@ -58,6 +58,11 @@ namespace HannaRoads
             int count = 0;
             while (count < rSegments.Count)
             {
+                if (rSegments[count].ignoreFromRoadSystemTerrainUpdate)
+                {
+                    count++;
+                    yield return null;
+                }
                 rSegments[count].AlignTerrain();
                 EditorUtility.DisplayProgressBar("Updating Roads", $"Updating {rSegments[count].name}", count / (float)rSegments.Count);
 

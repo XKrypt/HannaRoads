@@ -36,6 +36,7 @@ namespace HannaRoads.HannaEditor
             EditorGUILayout.EndHorizontal();
 
 
+
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("Detail Level");
             rSegment.detailLevel = EditorGUILayout.IntSlider(rSegment.detailLevel, 1, 200);
@@ -77,6 +78,16 @@ namespace HannaRoads.HannaEditor
             EditorGUILayout.LabelField("Align radius");
             rSegment.terrainAlignRadius = EditorGUILayout.Slider(rSegment.terrainAlignRadius, 0.01f, 100);
             EditorGUILayout.EndHorizontal();
+
+
+            EditorGUILayout.Space(2);
+            EditorGUILayout.HelpBox("If this is marked, the terrain will not be aligned with this segment when \"Align all roads with terrain\" button is pressed", MessageType.Info);
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("Ignore this segment from being updated in terrain global alignment");
+            rSegment.ignoreFromRoadSystemTerrainUpdate = EditorGUILayout.Toggle(rSegment.ignoreFromRoadSystemTerrainUpdate);
+            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.Space(2);
+
 
 
             // EditorGUILayout.BeginHorizontal();

@@ -26,6 +26,8 @@ namespace HannaRoads
         public HannaIntersection endIntersection;
         public HannaIntersection startIntersection;
 
+        public bool ignoreFromRoadSystemTerrainUpdate;
+
 
         public List<RoadObject> objectsAlongRoad = new List<RoadObject>();
         [SerializeField] public List<RoadLine> roadLines = new List<RoadLine>();
@@ -130,7 +132,7 @@ namespace HannaRoads
         IEnumerator AlignTerrainOperation()
         {
 
-            List<Terrain> terrainsToOperate = new List<Terrain>(terrainsBellowRoad);
+            List<Terrain> terrainsToOperate = FindObjectsByType<Terrain>(FindObjectsSortMode.None).ToList();
 
             List<ThreadSegment> threads = new List<ThreadSegment>();
 
@@ -483,13 +485,13 @@ namespace HannaRoads
                     uvs.Add(new Vector2(sliceT, t * GetApproxLength(resolution) / uSpan)); // UVs bem mapeados
                 }
 
-                Vector3 rightVertex = Vector3.right * (meshWidth / 2);
-                Vector3 leftVertex = Vector3.left * (meshWidth / 2);
-                Vector3 vA = bezierPoint.LocalSpace(rightVertex);
-                Vector3 vB = bezierPoint.LocalSpace(leftVertex);
+                // Vector3 rightVertex = Vector3.right * (terrainAlignRadius / 2);
+                // Vector3 leftVertex = Vector3.left * (terrainAlignRadius / 2);
+                // Vector3 vA = bezierPoint.LocalSpace(rightVertex);
+                // Vector3 vB = bezierPoint.LocalSpace(leftVertex);
 
-                DetectTerrain(vA);
-                DetectTerrain(vB);
+                // DetectTerrain(vA);
+                // DetectTerrain(vB);
             }
 
 
