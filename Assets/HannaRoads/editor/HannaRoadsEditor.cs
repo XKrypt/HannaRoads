@@ -45,7 +45,14 @@ namespace HannaRoads
                     SwitchMode();
                 }
             }
+
             EditorGUILayout.EndHorizontal();
+            EditorGUILayout.Space(1);
+            if (GUILayout.Button("Align all roads with terrain"))
+            {
+                hannaRoad.AlignTerrainForAllSegments();
+            }
+            EditorGUILayout.Space(5);
 
             hannaRoad.activeSegment = (RSegment)EditorGUILayout.ObjectField("Active segment", hannaRoad.activeSegment, typeof(RSegment), true);
             hannaRoad.activeIntersection = (HannaIntersection)EditorGUILayout.ObjectField("Active intersection", hannaRoad.activeIntersection, typeof(HannaIntersection), true);
@@ -149,8 +156,10 @@ namespace HannaRoads
 
                     if (frameEvent.alt)
                     {
-                        Handles.color = Color.green;                        
-                    }else{
+                        Handles.color = Color.green;
+                    }
+                    else
+                    {
                         Handles.color = Color.grey;
                     }
                     //Cria um pequeno cubo que mostra onde a estrada deve começar ou terminar se ja estiver seguindo outra estrada
