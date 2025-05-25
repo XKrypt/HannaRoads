@@ -23,6 +23,14 @@ namespace HannaRoads
 
         public RSegment lastRSegment;
 
+        //Default settings;
+
+        public Material defaultRoadMaterial;
+        public Material defaultRoadLineMaterial;
+
+        public float defaultWidth = 6;
+        public int defaultDetailLevel = 15;
+
 
         public void AddRSegment(RSegment rSegment)
         {
@@ -102,6 +110,11 @@ namespace HannaRoads
             end.transform.SetParent(roadObject.transform);
 
             RSegment rSegment = roadObject.GetComponent<RSegment>();
+
+
+            rSegment.defaultRoadMaterial = defaultRoadMaterial;
+            rSegment.width = defaultWidth;
+            rSegment.detailLevel = defaultDetailLevel;
 
             rSegment.start = start.transform;
             rSegment.end = end.transform;

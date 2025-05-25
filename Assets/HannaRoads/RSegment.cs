@@ -40,6 +40,8 @@ namespace HannaRoads
         public float verticalProfileMultiplayer = 0f;
         public Transform end;
 
+        public Material defaultRoadMaterial;
+
         public float width = 1;
         public int detailLevel = 10;
 
@@ -99,7 +101,16 @@ namespace HannaRoads
             {
                 GenerateRoadLine(ref item.mesh, item);
             }
+            MeshRenderer meshRenderer = GetComponent<MeshRenderer>();
+
+            if (isFirstTime)
+            {
+                meshRenderer.material = defaultRoadMaterial;
+                isFirstTime = false;
+            }
         }
+
+        bool isFirstTime = true;
 
         float CalculateSpan(Vector2 v1, Vector2 v2)
         {
@@ -378,7 +389,6 @@ namespace HannaRoads
             {
                 endRef.UpdateMeshVerts();
             }
-
 
         }
 

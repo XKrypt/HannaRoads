@@ -47,6 +47,24 @@ namespace HannaRoads
             }
 
             EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.Space(1);
+
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("Default width");
+            hannaRoad.defaultWidth = EditorGUILayout.Slider(hannaRoad.defaultWidth, 0.02f, 20);
+            EditorGUILayout.EndHorizontal();
+     
+
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("Default detail Level");
+            hannaRoad.defaultDetailLevel = EditorGUILayout.IntSlider(hannaRoad.defaultDetailLevel, 1, 200);
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("defaultRoadMaterial"));
+            EditorGUILayout.EndHorizontal();
+
             EditorGUILayout.Space(1);
             if (GUILayout.Button("Align all roads with terrain"))
             {
@@ -227,7 +245,6 @@ namespace HannaRoads
 
                         if (hannaRoad.rSegments.Count < 2 && !frameEvent.alt)
                         {
-                            //Posiciona o ponto de referencia um pouco acima do ponto para que não haja problemas de renderização
                             referencePoints[0].transform.position = hit.point + Vector3.up * 0.001f; ;
                         }
 
@@ -235,7 +252,6 @@ namespace HannaRoads
                         SceneView.RepaintAll();
                     }
                     else if (currentRSegment != null && frameEvent.type != EventType.MouseDown && frameEvent.button != 1)
-                    //Executa enquanto o shift esta pressionado e atualiza o final da estrada junto com o mouse se uma estrada foi criada
                     {
                         currentRSegment.endRef.transform.position = hit.point + Vector3.up * 0.001f;
                         currentRSegment.controlPoints[0].transform.position = Vector3.Lerp(currentRSegment.start.transform.position, currentRSegment.end.transform.position, 0.1f) + Vector3.up * 0.001f;
