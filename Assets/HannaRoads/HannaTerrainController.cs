@@ -10,65 +10,9 @@ public class HannaTerrainController : MonoBehaviour
     public Terrain terrain;           // Referência para o objeto Terrain 
 
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
-    public RSegment rSegment;
-
     void OnDrawGizmos()
     {
-        // if (!terrain && !rSegment) return;
 
-        // TerrainData data = terrain.terrainData;
-        // Vector3 terrainPos = terrain.transform.position;
-        // int heightmapRes = data.heightmapResolution;
-
-        // Gizmos.color = Color.cyan;
-
-        // int resolution = 200;
-        // float width = rSegment.terrainAlignRadius; // ajuste conforme necessário
-
-        // for (int i = 0; i <= resolution; i++)
-        // {
-        //     float t = i / (float)resolution;
-        //     OrientedPoint bezierPoint = rSegment.GetBezierPointGlobal(t); /* chame seu GetBezierPointGlobal(t) */;
-
-        //     Vector3 leftWorld = bezierPoint.LocalSpace(Vector3.left * (width / 2f));
-        //     Vector3 rightWorld = bezierPoint.LocalSpace(Vector3.right * (width / 2f));
-
-        //     int samples = Mathf.CeilToInt(width);
-        //     for (int j = 0; j <= samples; j++)
-        //     {
-        //         float lerpT = j / (float)samples;
-        //         Vector3 worldPoint = Vector3.Lerp(leftWorld, rightWorld, lerpT);
-
-        //         float rawHeight = worldPoint.y - terrainPos.y;
-        //         float margin = Mathf.Max(rSegment.terrainBottomMargin, 0.01f);
-
-        //         worldPoint.y = rawHeight - margin;
-
-        //         // Visual: ponto real onde o terreno seria alterado
-        //         Gizmos.DrawSphere(worldPoint, 0.05f);
-
-        //         // (opcional) linha para cima, para indicar onde está o ponto em relação ao terreno
-        //         Gizmos.DrawLine(worldPoint, worldPoint + Vector3.up * 0.5f);
-        //     }
-
-        //     Gizmos.color = Color.yellow;
-        //     Gizmos.DrawSphere(bezierPoint.pos, 0.05f);
-
-        //     Gizmos.color = Color.cyan;
-        // }
-        // Gizmos.color = Color.white;
     }
 
 
