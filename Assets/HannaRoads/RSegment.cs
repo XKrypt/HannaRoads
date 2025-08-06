@@ -786,7 +786,7 @@ namespace HannaRoads
         }
 
 
-        float GetApproxLength(int precision = 8)
+        public float GetApproxLength(int precision = 8)
         {
             Vector3[] points = new Vector3[precision];
 

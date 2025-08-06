@@ -39,7 +39,7 @@ namespace HannaRoads
         public float maxAlignDistance = 5f;
         public float minAlignDistance = .5f;
         public float terrainBottomMargin = .05f;
-        [SerializeField] List<LSideIntersection> intersections = new List<LSideIntersection>();
+        public List<LSideIntersection> intersections = new List<LSideIntersection>();
 
         public void Generate()
         {
@@ -100,6 +100,39 @@ namespace HannaRoads
 
             return Vector3.Lerp(aBLerp, bCLerp, amount);
 
+        }
+
+
+        public OrientedPoint BevelSideOrientedPoint(LSideIntersection lSide, float t)
+        {
+
+
+            // A, B e C são os três pontos da curva de Bézier quadrática.
+            // O ponto B é o ponto de controle central.
+            Vector3 A = lSide.subPoint1;
+            Vector3 B = lSide.mainPoint * (shape + 1); // Assumindo que este já é o ponto de controle.
+            Vector3 C = lSide.subPoint2;
+
+            // Interpolações de primeira ordem
+            Vector3 aBLerp = Vector3.Lerp(A, B, t);
+            Vector3 bCLerp = Vector3.Lerp(B, C, t);
+
+            // Posição final da curva (interpolação de segunda ordem)
+            Vector3 finalPos = Vector3.Lerp(aBLerp, bCLerp, t);
+
+            // Tangente da curva no ponto 't'
+            // O vetor de direção entre os pontos intermediários
+            Vector3 tangent = (bCLerp - aBLerp).normalized;
+
+            // Rotação baseada na tangente e no vetor 'up' do objeto
+            Quaternion rot = Quaternion.LookRotation(tangent, transform.up.normalized);
+
+            // Retorna o OrientedPoint completo
+            return new OrientedPoint()
+            {
+                pos = finalPos,
+                rot = rot
+            };
         }
 
 
@@ -168,13 +201,13 @@ namespace HannaRoads
 
 
 
-
+        public List<LSideIntersection> intersectionLSides = new List<LSideIntersection>();
 
 
         void GenerateQuad()
         {
 
-            List<LSideIntersection> intersectionLSides = new List<LSideIntersection>();
+            intersectionLSides = new List<LSideIntersection>();
 
 
             LSideIntersection A = new LSideIntersection()
@@ -250,7 +283,7 @@ namespace HannaRoads
         void GenerateMesh()
         {
 
-
+            intersections.Clear();
             if (resolutionCurve < 4)
             {
                 resolutionCurve = 4;
@@ -275,10 +308,7 @@ namespace HannaRoads
                 mainPoint = new Vector3(1, 0, -1) * size
             };
 
-            intersections.Add(A);
-            intersections.Add(B);
-            intersections.Add(C);
-            intersections.Add(D);
+
 
 
 
@@ -302,6 +332,11 @@ namespace HannaRoads
             B.SetBevelPoints(GenerateBevelPoints(B, shape));
             C.SetBevelPoints(GenerateBevelPoints(C, shape));
             D.SetBevelPoints(GenerateBevelPoints(D, shape));
+
+            intersections.Add(A);
+            intersections.Add(B);
+            intersections.Add(C);
+            intersections.Add(D);
 
 
 
@@ -433,7 +468,7 @@ namespace HannaRoads
         void GenerateMesh3Ways()
         {
 
-
+            intersections.Clear();
             if (resolutionCurve < 4)
             {
                 resolutionCurve = 4;
@@ -476,6 +511,11 @@ namespace HannaRoads
 
             A.SetBevelPoints(GenerateBevelPoints(A, shape));
             B.SetBevelPoints(GenerateBevelPoints(B, shape));
+
+            intersections.Add(A);
+            intersections.Add(B);
+            intersections.Add(C);
+            intersections.Add(D);
 
 
 
@@ -601,7 +641,7 @@ namespace HannaRoads
 
 
     [System.Serializable]
-    struct LSideIntersection
+    public struct LSideIntersection
     {
         public Vector3 mainPoint;
         public Vector3 subPoint1;
@@ -612,6 +652,7 @@ namespace HannaRoads
         {
             bevelPoints = points;
         }
+
     }
 
 
