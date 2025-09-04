@@ -50,6 +50,7 @@ namespace HannaRoads
 
         public AnimationCurve terrainAlignCurve;
         public float terrainAlignRadius = 5f;
+        public int terrainPrecision = 35;
         public float maxAlignDistance = 5f;
         public float minAlignDistance = .5f;
         public float terrainBottomMargin = .05f;
@@ -187,7 +188,7 @@ namespace HannaRoads
                     {
                         float t = i / 200f;
                         OrientedPoint point = orientedPoints[i];
-                        threadSegment.hanna.RampTerrainAlongBezier(threadSegment.accumulatedHeights, threadSegment.affected, terrainAlignRadius, point, terrainBottomMargin, terrainSizeData, heightmapRes, terrainPosition);
+                        threadSegment.hanna.RampTerrainAlongBezier(threadSegment.accumulatedHeights, threadSegment.affected, terrainAlignRadius, terrainPrecision,point, terrainBottomMargin, terrainSizeData, heightmapRes, terrainPosition);
                         alignTerrainProgress += 100f / (terrainsToOperate.Count * 200f);
                     }
 

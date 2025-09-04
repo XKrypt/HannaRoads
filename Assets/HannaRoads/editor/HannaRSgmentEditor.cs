@@ -75,8 +75,12 @@ namespace HannaRoads.HannaEditor
             EditorGUILayout.LabelField("Terrain settings", TitleStyle());
 
             EditorGUILayout.BeginHorizontal();
-            EditorGUILayout.LabelField("Align radius");
+            EditorGUILayout.LabelField("Align width");
             rSegment.terrainAlignRadius = EditorGUILayout.Slider(rSegment.terrainAlignRadius, 0.01f, 100);
+            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("Align precision");
+            rSegment.terrainPrecision = EditorGUILayout.IntSlider(rSegment.terrainPrecision, 10, 100);
             EditorGUILayout.EndHorizontal();
 
 
@@ -124,7 +128,7 @@ namespace HannaRoads.HannaEditor
 
 
             Rect rect = GUILayoutUtility.GetRect(18, 18, "TextField");
-            EditorGUI.ProgressBar(rect, rSegment.alignTerrainProgress, $"{(int)(rSegment.alignTerrainProgress)}%");
+            EditorGUI.ProgressBar(rect, rSegment.alignTerrainProgress / 100, $"{(int)(rSegment.alignTerrainProgress)}%");
 
 
             GUILayout.Space(10);

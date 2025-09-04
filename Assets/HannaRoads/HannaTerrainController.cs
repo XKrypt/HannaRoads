@@ -192,6 +192,7 @@ public class HannaTerrainController : MonoBehaviour
         float[,] accumulatedHeights,
         bool[,] affectedCells,
         float width,
+        float precision,
         OrientedPoint bezierPoint,
         float bottomMargin,
         Vector3 terrainSize,
@@ -225,6 +226,59 @@ public class HannaTerrainController : MonoBehaviour
                     affectedCells[z, x] = true;
                 }
             }
+        }
+    }
+    public void RampTerrainAlongBezierRadius(
+        float[,] accumulatedHeights,
+        bool[,] affectedCells,
+        float width,
+        float radius,
+        OrientedPoint bezierPoint,
+        float bottomMargin,
+        Vector3 terrainSize,
+        int heightmapRes,
+        Vector3 terrainPosition
+        )
+    {
+
+        Vector3 leftWorld = bezierPoint.LocalSpace(Vector3.left * (width / 2f));
+        Vector3 rightWorld = bezierPoint.LocalSpace(Vector3.right * (width / 2f));
+
+        int sampleCount = Mathf.CeilToInt(width);
+        for (int j = 0; j <= sampleCount; j++)
+        {
+            float lerpT = j / (float)sampleCount;
+            Vector3 worldPoint = Vector3.Lerp(leftWorld, rightWorld, lerpT);
+
+            for (int xCell = 0; xCell < heightmapRes - 1; xCell++)
+            {
+                for (int zCell = 0; zCell < heightmapRes - 1; zCell++)
+                {
+                    int x = Mathf.RoundToInt(((worldPoint.x - terrainPosition.x) / terrainSize.x) * (heightmapRes - 1));
+                    int z = Mathf.RoundToInt(((worldPoint.z - terrainPosition.z) / terrainSize.z) * (heightmapRes - 1));
+                    Vector3 cellPosition = ConvertFromTerrainPositionToWordPosition(xCell, zCell, heightmapRes, terrainSize, terrainPosition);
+
+                    if (Vector3.Distance(cellPosition, worldPoint) < radius)
+                    {
+                        if (x >= 0 && x < heightmapRes && z >= 0 && z < heightmapRes)
+                        {
+                            float rawHeight = worldPoint.y - terrainPosition.y;
+
+                            float normalizedHeight = (rawHeight - bottomMargin) / terrainSize.y;
+
+
+                            if (!affectedCells[z, x] || normalizedHeight < accumulatedHeights[z, x])
+                            {
+                                accumulatedHeights[z, x] = normalizedHeight;
+                                affectedCells[z, x] = true;
+                            }
+                        }
+                    }
+
+
+                }
+            }
+
         }
     }
 
@@ -294,6 +348,14 @@ public class HannaTerrainController : MonoBehaviour
         // Converte (x, z) da grade local para coordenada mundial real
         float worldX = (xPos / (float)(resolution - 1)) * terrainData.size.x + terrainPos.x;
         float worldZ = (zPox / (float)(resolution - 1)) * terrainData.size.z + terrainPos.z;
+
+        return new Vector3(worldX, 0, worldZ);
+    }
+    public Vector3 ConvertFromTerrainPositionToWordPosition(int xPos, int zPox, int resolution, Vector3 size, Vector3 terrainPos)
+    {
+        // Converte (x, z) da grade local para coordenada mundial real
+        float worldX = (xPos / (float)(resolution - 1)) * size.x + terrainPos.x;
+        float worldZ = (zPox / (float)(resolution - 1)) * size.z + terrainPos.z;
 
         return new Vector3(worldX, 0, worldZ);
     }
