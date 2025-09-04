@@ -158,12 +158,13 @@ namespace HannaRoads
 
                 }
             }
-            if (previousRSegment)
+            if (previousRSegment != null)
             {
-                foreach (var control in rSegment.controlPoints)
+                foreach (var control in previousRSegment.controlPoints)
                 {
-                    control.UpdatePositions();
-
+                    
+                        control.UpdatePositions();
+                   
                 }
             }
 

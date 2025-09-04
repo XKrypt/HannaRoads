@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using Unity.EditorCoroutines.Editor;
@@ -416,7 +415,7 @@ namespace HannaRoads
             List<Vector3> vertices = new List<Vector3>();
             List<Vector3> normals = new List<Vector3>();
             List<Vector2> uvs = new List<Vector2>();
-
+            List<Color> vertexColors = new List<Color>();
 
             int resolution = detailLevel;
 
@@ -473,7 +472,19 @@ namespace HannaRoads
                     Vector3 lateral = Vector3.Lerp(Vector3.left, Vector3.right, sliceT) * (totalWidth / 2f);
 
                     // Se quiser curvar no Y, adicione um offset aqui com curva
-
+                    if (i == 0 && startRef.previousRSegment == null)
+                    {
+                        vertexColors.Add(Color.red);
+                        Debug.Log(s);
+                    }
+                    else if (i == resolution && endRef.rSegment == null)
+                    {
+                        vertexColors.Add(Color.blue);
+                    }
+                    else
+                    {
+                        vertexColors.Add(Color.black);
+                    }
 
                     float verticalOffset = verticalProfileEnd * finalVerticalMultiplier;
                     lateral.y += verticalOffset;
@@ -523,6 +534,7 @@ namespace HannaRoads
             mesh.SetNormals(normals);
             mesh.SetTriangles(triangles, 0);
             mesh.SetUVs(0, uvs);
+            mesh.SetColors(vertexColors);
 
             if (startRef != null)
             {
@@ -581,6 +593,7 @@ namespace HannaRoads
             List<Vector3> vertices = new List<Vector3>();
             List<Vector3> normals = new List<Vector3>();
             List<Vector2> uvs = new List<Vector2>();
+
 
 
             int resolution = segmentMesh.detailLevel;
@@ -682,6 +695,7 @@ namespace HannaRoads
             mesh.SetNormals(normals);
             mesh.SetTriangles(triangles, 0);
             mesh.SetUVs(0, uvs);
+
 
             if (startRef != null)
             {
