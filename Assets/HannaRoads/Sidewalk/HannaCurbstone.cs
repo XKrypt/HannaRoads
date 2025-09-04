@@ -10,13 +10,13 @@ using UnityEngine.UIElements;
 public class HannaCurbstone : MonoBehaviour
 {
 
-    public RSegment rSegment;
+    public SideWalkSegment sSegment;
     public HannaIntersection hannaIntersection;
 
-    public int resolution = 32;
+    public int resolution = 16;
     Mesh mesh;
-    public float streetGuideHeight;
-    public float streetGuideWidth;
+    public float streetGuideHeight = 0.3f;
+    public float streetGuideWidth = 0.3f;
 
 
     public Vector3 offset;
@@ -37,6 +37,11 @@ public class HannaCurbstone : MonoBehaviour
             mesh = new Mesh();
             mesh.name = "curbstone";
         }
+
+        if (GetComponent<MeshRenderer>().sharedMaterial == null)
+        {
+            GetComponent<MeshRenderer>().sharedMaterial = sSegment.hannaSideWalkEditor.curbstoneDefaultMaterial;
+        }
         mesh.Clear();
         verticesShow.Clear();
 
@@ -44,7 +49,7 @@ public class HannaCurbstone : MonoBehaviour
         List<Vector3> vertices = new List<Vector3>();
         List<Vector3> normals = new List<Vector3>();
         List<Vector2> uvs = new List<Vector2>();
-   
+
 
         // Lista para armazenar o 't' para cada anel de vértices
         List<float> tPoints = new List<float>();
@@ -57,7 +62,7 @@ public class HannaCurbstone : MonoBehaviour
         }
 
         // 2. Adicione os pontos 't' dos DownPoints
-        foreach (var downPoint in downPoints)
+        foreach (var downPoint in sSegment.downPoints)
         {
             float startT = downPoint.tPosition - downPoint.size / 2;
             float endT = downPoint.tPosition + downPoint.size / 2;
@@ -80,7 +85,7 @@ public class HannaCurbstone : MonoBehaviour
             float currentHeight = streetGuideHeight;
 
             // Verifique se o 't' está dentro de um DownPoint para ajustar a altura
-            foreach (var downPoint in downPoints)
+            foreach (var downPoint in sSegment.downPoints)
             {
                 float startT = downPoint.tPosition - downPoint.size / 2;
                 float endT = downPoint.tPosition + downPoint.size / 2;
@@ -95,57 +100,6 @@ public class HannaCurbstone : MonoBehaviour
 
             GenerateRing(vertices, normals, uvs, t, currentHeight);
         }
-
-
-        // List<Vector3> vertices = new List<Vector3>();
-        // List<Vector3> normals = new List<Vector3>();
-
-        // float t = 0;
-        // if (downPoints.Count > 0)
-        // {
-        //     int resolutionPerRing = resolution / downPoints.Count;
-        //     foreach (var downPoint in downPoints)
-        //     {
-        //         float startPoint = downPoint.tPosition - downPoint.size;
-        //         while (t <= startPoint)
-        //         {
-
-        //             GenerateRing(vertices, normals, t);
-
-        //             if (t == startPoint)
-        //             {
-        //                 break;
-        //             }
-
-        //             t += 1 / (float)resolutionPerRing;
-
-        //             if (t > startPoint)
-        //             {
-        //                 t = startPoint;
-        //             }
-        //         }
-        //     }
-        // }
-        // else
-        // {
-        //     while (t <= 1)
-        //     {
-
-        //         GenerateRing(vertices, normals, t);
-
-        //         if (t == 1)
-        //         {
-        //             break;
-        //         }
-
-        //         t += 1 / (float)resolution;
-
-        //         if (t > 1)
-        //         {
-        //             t = 1;
-        //         }
-        //     }
-        // }
 
 
         //Connect Edges
@@ -174,7 +128,6 @@ public class HannaCurbstone : MonoBehaviour
 
         mesh.SetVertices(vertices);
         mesh.SetTriangles(triangles, 0);
-        //mesh.SetNormals(normals);
         mesh.RecalculateNormals();
         mesh.SetUVs(0, uvs);
 
@@ -182,14 +135,22 @@ public class HannaCurbstone : MonoBehaviour
 
     }
 
+    private void OnDestroy()
+    {
+        if (sSegment != null)
+        {
+            sSegment.hannaCurbstones.Remove(this);
+        }
+    }
+
     public int hannaIntersectionLSideIndex = 0;
 
     void GenerateRing(List<Vector3> vertices, List<Vector3> normals, List<Vector2> uvs, float t, float currentHeight)
     {
         OrientedPoint point = new OrientedPoint();
-        if (rSegment != null)
+        if (sSegment != null)
         {
-            point = rSegment.GetBezierPoint(t);
+            point = sSegment.GetBezierPoint(t);
 
         }
         if (hannaIntersection != null)
@@ -200,23 +161,18 @@ public class HannaCurbstone : MonoBehaviour
 
         }
 
+        Vector3 finalOffset = offset + ((invertSide ? Vector3.right : Vector3.left) * (sSegment.GetWidthInT(t) / 2));
+
         Vector3 left = Vector3.left * streetGuideWidth / 2;
         Vector3 right = Vector3.right * streetGuideWidth / 2;
 
 
-        Vector3 up = Vector3.up * currentHeight / 2;
-        Vector3 down = Vector3.down * streetGuideWidth / 2;
+        Vector3 up = Vector3.up * (currentHeight / 2);
+        Vector3 down = Vector3.down * (streetGuideHeight / 2);
         verticesShow.Add(point.pos);
 
-
-        // verticesShow.Add(point.LocalSpace(left + up + offset));
-        // verticesShow.Add(point.LocalSpace(right + up + offset));
-
-        // verticesShow.Add(point.LocalSpace(left + down + offset));
-        // verticesShow.Add(point.LocalSpace(right + down + offset));
-
-        vertices.Add(point.LocalSpace(left + up + offset));
-        vertices.Add(point.LocalSpace(right + up + offset));
+        vertices.Add(point.LocalSpace(left + up + finalOffset));
+        vertices.Add(point.LocalSpace(right + up + finalOffset));
 
         normals.Add(Vector3.up);
         normals.Add(Vector3.up);
@@ -224,22 +180,22 @@ public class HannaCurbstone : MonoBehaviour
 
 
 
-        vertices.Add(point.LocalSpace(right + up + offset));
-        vertices.Add(point.LocalSpace(right + down + offset));
+        vertices.Add(point.LocalSpace(right + up + finalOffset));
+        vertices.Add(point.LocalSpace(right + down + finalOffset));
 
         normals.Add(Vector3.right);
         normals.Add(Vector3.right);
 
 
-        vertices.Add(point.LocalSpace(right + down + offset));
-        vertices.Add(point.LocalSpace(left + down + offset));
+        vertices.Add(point.LocalSpace(right + down + finalOffset));
+        vertices.Add(point.LocalSpace(left + down + finalOffset));
 
         normals.Add(Vector3.down);
         normals.Add(Vector3.down);
 
 
-        vertices.Add(point.LocalSpace(left + down + offset));
-        vertices.Add(point.LocalSpace(left + up + offset));
+        vertices.Add(point.LocalSpace(left + down + finalOffset));
+        vertices.Add(point.LocalSpace(left + up + finalOffset));
         normals.Add(Vector3.left);
         normals.Add(Vector3.left);
 
@@ -252,71 +208,13 @@ public class HannaCurbstone : MonoBehaviour
         uvs.Add(new Vector2(uBase * 6, t));
         uvs.Add(new Vector2(uBase * 7, t));
         uvs.Add(new Vector2(uBase * 8, t));
-      
-
-    }
-    void GenerateRing(List<Vector3> vertices, List<Vector3> normals, float t, DownPoint downPoint, float downPointT)
-    {
-        OrientedPoint point = rSegment.GetBezierPoint(t);
-
-        Vector3 left = Vector3.left * streetGuideWidth / 2;
-        Vector3 right = Vector3.right * streetGuideWidth / 2;
 
 
-        Vector3 up = Vector3.up * streetGuideHeight / 2 * downPoint.down.Evaluate(downPointT);
-        Vector3 down = Vector3.down * streetGuideHeight / 2;
-
-
-        verticesShow.Add(point.LocalSpace(left + up));
-        verticesShow.Add(point.LocalSpace(right + up));
-
-        verticesShow.Add(point.LocalSpace(left + down));
-        verticesShow.Add(point.LocalSpace(right + down));
-
-        vertices.Add(point.LocalSpace(left + up));
-        vertices.Add(point.LocalSpace(right + up));
-
-        normals.Add(Vector3.up);
-        normals.Add(Vector3.up);
-
-
-        vertices.Add(point.LocalSpace(right + up));
-        vertices.Add(point.LocalSpace(right + down));
-
-        normals.Add(Vector3.right);
-        normals.Add(Vector3.right);
-
-
-        vertices.Add(point.LocalSpace(right + down));
-        vertices.Add(point.LocalSpace(left + down));
-
-        normals.Add(Vector3.down);
-        normals.Add(Vector3.down);
-
-
-        vertices.Add(point.LocalSpace(left + down));
-        vertices.Add(point.LocalSpace(left + up));
-        normals.Add(Vector3.left);
-        normals.Add(Vector3.left);
-
-    }
-
-
-    public void GenerateDownPoints(DownPoint downPoint, List<Vector3> vertices, List<Vector3> normals)
-    {
-        float init = downPoint.tPosition - downPoint.size / 2;
-        float end = downPoint.tPosition + downPoint.size / 2;
-
-        for (int i = 0; i < downPoint.resolution; i++)
-        {
-            float t = Mathf.Lerp(init, end, i / (float)resolution);
-
-            GenerateRing(vertices, normals, t, downPoint, i / (float)resolution);
-
-        }
     }
 
     [SerializeField] bool enableGizmos = false;
+    public bool invertSide;
+
     private void OnDrawGizmos()
     {
         if (!enableGizmos) return;
@@ -334,7 +232,7 @@ public class HannaCurbstone : MonoBehaviour
 
 
         Gizmos.DrawSphere(transform.TransformPoint(a), 0.05f);
-       Gizmos.DrawSphere(transform.TransformPoint(b), 0.05f);
+        Gizmos.DrawSphere(transform.TransformPoint(b), 0.05f);
         Gizmos.DrawSphere(transform.TransformPoint(c), 0.05f);
     }
 
@@ -346,6 +244,5 @@ public struct DownPoint
     public AnimationCurve down;
     public float tPosition;
     public int resolution;
-
     public float size;
 }

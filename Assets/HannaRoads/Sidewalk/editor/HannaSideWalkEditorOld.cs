@@ -1,15 +1,15 @@
 using UnityEngine;
 using UnityEditor;
 
-[CustomEditor(typeof(HannaSideWalk))]
-public class HannaSideWalkEditor : Editor
+[CustomEditor(typeof(SideWalkOld))]
+public class HannaSideWalkEditorOld : Editor
 {
 
 
-    HannaSideWalk hannaSideWalk;
+    SideWalkOld hannaSideWalk;
     void OnEnable()
     {
-        hannaSideWalk = target as HannaSideWalk;
+        hannaSideWalk = target as SideWalkOld;
     }
     public override void OnInspectorGUI()
     {

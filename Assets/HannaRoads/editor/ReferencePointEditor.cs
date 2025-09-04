@@ -76,8 +76,8 @@ public class ReferencePointEditor : Editor
                     createdSegment.startRef = end;
                     createdSegment.endRef = start;
 
-                    createdSegment.controlPoints[1].transform.position = Vector3.Lerp(start.transform.position,end.transform.position, 0.1f);
-                    createdSegment.controlPoints[0].transform.position = Vector3.Lerp(end.transform.position,start.transform.position, 0.1f);
+                    createdSegment.controlPoints[1].transform.position = Vector3.Lerp(start.transform.position, end.transform.position, 0.1f);
+                    createdSegment.controlPoints[0].transform.position = Vector3.Lerp(end.transform.position, start.transform.position, 0.1f);
 
                     start.previousRSegment = createdSegment;
                     end.rSegment = createdSegment;

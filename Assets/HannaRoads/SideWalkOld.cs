@@ -8,7 +8,7 @@ using UnityEngine.UIElements;
 [RequireComponent(typeof(MeshRenderer))]
 [RequireComponent(typeof(MeshFilter))]
 [ExecuteAlways]
-public class HannaSideWalk : MonoBehaviour
+public class SideWalkOld : MonoBehaviour
 {
 
     public RSegment rSegment;
