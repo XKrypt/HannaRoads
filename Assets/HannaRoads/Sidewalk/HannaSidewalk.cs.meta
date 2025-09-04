@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: fe27a82950259c44e818114aeaead575
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - activeSegment: {instanceID: 0}
+  - activeIntersection: {instanceID: 0}
+  - lastRSegment: {instanceID: 0}
+  - curbstoneDefaultMaterial: {fileID: 2100000, guid: ae8005aed327f744c86d45b741290d78, type: 2}
+  - sidewalkDefaultMaterial: {fileID: 2100000, guid: ae8005aed327f744c86d45b741290d78, type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

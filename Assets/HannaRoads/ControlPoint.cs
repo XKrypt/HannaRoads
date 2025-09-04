@@ -16,6 +16,10 @@ namespace HannaRoads
 
         public RSegment rSegment;
 
+
+        bool isSideWalk;
+        public SideWalkSegment sSegment;
+
         public ReferencePoint referencePoint;
 
         private void Update()
@@ -31,6 +35,7 @@ namespace HannaRoads
         public void UpdatePositions()
         {
             rSegment.Generate();
+            referencePoint = segmentType == SegmentType.Start ? rSegment.startRef : rSegment.endRef;
 
             if (referencePoint != null)
             {
