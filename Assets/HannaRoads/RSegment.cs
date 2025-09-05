@@ -28,6 +28,10 @@ namespace HannaRoads
         public bool ignoreFromRoadSystemTerrainUpdate;
 
 
+        public bool dontBeAffectedForNextRoadWidthShape;
+        public bool dontBeAffectedForNextRoadHeightShape;
+
+
         public List<RoadObject> objectsAlongRoad = new List<RoadObject>();
         [SerializeField] public List<RoadLine> roadLines = new List<RoadLine>();
 
@@ -465,7 +469,7 @@ namespace HannaRoads
 
 
 
-                if (endRef.rSegment != null && t >= startOffset && t <= endOffset)
+                if (endRef.rSegment != null && t >= startOffset && t <= endOffset && !dontBeAffectedForNextRoadWidthShape)
                 {
                     // Normaliza o t entre startOffset e endOffset para gerar um valor de 0 a 1
                     float offsetLerp = Mathf.InverseLerp(startOffset, endOffset, t);
@@ -478,7 +482,7 @@ namespace HannaRoads
                     endRef.rSegment.width * endRef.rSegment.widthCurve.Evaluate(0) * endRef.rSegment.widthProfileMultiplier,
                     curveValue);
                 }
-                else if (t > endOffset)
+                else if (t > endOffset && !dontBeAffectedForNextRoadWidthShape && endRef.rSegment != null)
                 {
                     // Já passou do blend: adota a largura final
                     meshWidth = endRef.rSegment.width * endRef.rSegment.widthCurve.Evaluate(0) * endRef.rSegment.widthProfileMultiplier;
@@ -495,7 +499,7 @@ namespace HannaRoads
                     float sliceT = s / (float)(sliceResolution - 1); // de 0 (left) até 1 (right)
                     float verticalProfileEnd = verticalProfile.Evaluate(sliceT);
                     float finalVerticalMultiplier = verticalProfileMultiplayer;
-                    if (endRef.rSegment != null)
+                    if (endRef.rSegment != null && !dontBeAffectedForNextRoadHeightShape)
                     {
                         float A = verticalProfile.Evaluate(sliceT);
                         float B = endRef.rSegment.verticalProfile.Evaluate(sliceT);

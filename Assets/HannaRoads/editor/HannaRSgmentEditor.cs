@@ -51,6 +51,14 @@ namespace HannaRoads.HannaEditor
             rSegment.sliceResolution = EditorGUILayout.IntSlider(rSegment.sliceResolution, 2, 10);
             EditorGUILayout.EndHorizontal();
 
+            GUILayout.Space(15);
+            EditorGUILayout.LabelField("Shape configurations", TitleStyle());
+            GUILayout.Space(5);
+
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("Start curve offset");
+            rSegment.startOffset = EditorGUILayout.Slider(rSegment.startOffset, 0, 0.99f);
+            EditorGUILayout.EndHorizontal();
 
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("Start curve offset");
@@ -64,6 +72,16 @@ namespace HannaRoads.HannaEditor
 
             EditorGUILayout.BeginHorizontal();
             rSegment.widthCurveToNextRSegment = EditorGUILayout.CurveField("Width smoothness curve to next segment", rSegment.widthCurveToNextRSegment);
+            EditorGUILayout.EndHorizontal();
+
+
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("Don´t be affeccted by the next road width curve");
+            rSegment.dontBeAffectedForNextRoadWidthShape = EditorGUILayout.Toggle(rSegment.dontBeAffectedForNextRoadWidthShape);
+            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("Don´t be affeccted by the next road height curve");
+            rSegment.dontBeAffectedForNextRoadHeightShape = EditorGUILayout.Toggle(rSegment.dontBeAffectedForNextRoadHeightShape);
             EditorGUILayout.EndHorizontal();
 
             EditorGUILayout.BeginHorizontal();
@@ -86,10 +104,14 @@ namespace HannaRoads.HannaEditor
             rSegment.verticalProfileMultiplayer = EditorGUILayout.Slider(rSegment.verticalProfileMultiplayer, -5, 5);
             EditorGUILayout.EndHorizontal();
 
+
+            GUILayout.Space(15);
+
             if (GUILayout.Button("Add custom mesh"))
             {
                 rSegment.AddCustomMeshCurve();
             }
+            GUILayout.Space(15);
 
             GUILayout.Space(50);
 
