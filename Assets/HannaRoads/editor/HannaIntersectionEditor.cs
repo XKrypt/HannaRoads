@@ -109,6 +109,7 @@ namespace HannaRoads.HannaEditor
             {
                 hannaIntersection.AlignTerrain();
             }
+
         }
 
         public void SizeController()
@@ -152,6 +153,11 @@ namespace HannaRoads.HannaEditor
             EditorGUILayout.LabelField("Make 3 or 4 way intersection");
             hannaIntersection.crossing4 = EditorGUILayout.Toggle(hannaIntersection.crossing4);
             EditorGUILayout.EndHorizontal();
+
+            if (GUILayout.Button("Add custom mesh"))
+            {
+                hannaIntersection.AddCustomMeshCurve();
+            }
 
         }
 
