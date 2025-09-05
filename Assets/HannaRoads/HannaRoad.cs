@@ -11,6 +11,14 @@ namespace HannaRoads
     [ExecuteInEditMode]
     public class HannaRoad : MonoBehaviour
     {
+        [MenuItem("HannaRoads/Create Road System")]
+        public static void CreateHannaRoads()
+        {
+            GameObject obj = new GameObject("HannaRoads");
+
+            obj.AddComponent<HannaRoad>();
+
+        }
         public List<RSegment> rSegments = new List<RSegment>();
 
         public List<ReferencePoint> referencePoints = new List<ReferencePoint>();
@@ -25,6 +33,14 @@ namespace HannaRoads
 
 
         public RSegment lastRSegment;
+
+        //Default settings;
+
+        public Material defaultRoadMaterial;
+        public Material defaultRoadLineMaterial;
+
+        public float defaultWidth = 6;
+        public int defaultDetailLevel = 15;
 
 
         public void AddRSegment(RSegment rSegment)
@@ -106,6 +122,11 @@ namespace HannaRoads
 
             RSegment rSegment = roadObject.GetComponent<RSegment>();
 
+
+            rSegment.defaultRoadMaterial = defaultRoadMaterial;
+            rSegment.width = defaultWidth;
+            rSegment.detailLevel = defaultDetailLevel;
+
             rSegment.start = start.transform;
             rSegment.end = end.transform;
 
@@ -156,57 +177,7 @@ namespace HannaRoads
         {
 
 
-            // if (referencePoints.Count - 1 != rSegments.Count)
-            // {
-            //     Debug.LogWarning("Less referencesPoints than segments");
-            //     return;
-            // }
-
-            // foreach (var item in referencePoints)
-            // {
-            //     if (item.GetComponent<ReferencePoint>() == null)
-            //     {
-            //         item.AddComponent<ReferencePoint>();
-            //     }
-            // }
-            // for (int i = 0; i < referencePoints.Count - 1; i++)
-            // {
-            //     if (i >= rSegments.Count) break;
-
-            //     referencePoints[i].GetComponent<ReferencePoint>().SetType(SegmentType.Start);
-            //     referencePoints[i + 1].GetComponent<ReferencePoint>().SetType(SegmentType.End);
-            //     referencePoints[i + 1].GetComponent<ReferencePoint>().SetRSegment(rSegments[i]);
-            //     rSegments[i].start.position = referencePoints[i].position;
-            //     rSegments[i].end.position = referencePoints[i + 1].position;
-
-
-            //     rSegments[i].transform.position = referencePoints[i].position;
-            //     rSegments[i].transform.rotation = referencePoints[i].rotation;
-            // }
-
-
-            // for (int i = 0; i < rSegments.Count - 1; i++)
-            // {
-            //     List<Vector3> verticesSegA = rSegments[i].mesh.vertices.ToList();
-            //     List<Vector3> verticesSegB = rSegments[i + 1].mesh.vertices.ToList();
-
-            //     Vector3 vertexAPos = rSegments[i].meshFilter.transform.TransformPoint(verticesSegA.Last());
-            //     Vector3 vertexBPos = rSegments[i].meshFilter.transform.TransformPoint(verticesSegA[verticesSegA.Count - 2]);
-
-            //     Vector3 convertedPositionA = rSegments[i + 1].meshFilter.transform.InverseTransformPoint(vertexAPos);
-            //     Vector3 convertedPositionB = rSegments[i + 1].meshFilter.transform.InverseTransformPoint(vertexBPos);
-
-
-
-
-
-            //     verticesSegB[1] = vertexAPos;
-            //     verticesSegB[0] = vertexBPos;
-
-
-            //     rSegments[i + 1].mesh.SetVertices(verticesSegB);
-
-            // }
+          
 
         }
 

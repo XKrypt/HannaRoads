@@ -39,6 +39,8 @@ namespace HannaRoads
         public float verticalProfileMultiplayer = 0f;
         public Transform end;
 
+        public Material defaultRoadMaterial;
+
         public float width = 1;
         public int detailLevel = 10;
 
@@ -90,7 +92,7 @@ namespace HannaRoads
                         name = "RoadSegment"
                     };
                     meshFilter.sharedMesh = _mesh;
-                    GetComponent<MeshRenderer>().material = hannaRoad.defaultMaterial;
+                    GetComponent<MeshRenderer>().sharedMaterial = defaultRoadMaterial;
                 }
                 GenerateMeshNVerticesWay(_mesh);
             }
@@ -99,9 +101,10 @@ namespace HannaRoads
             {
                 GenerateRoadLine(ref item.mesh, item);
             }
-
             UpdateCustomMeshes();
         }
+
+        bool isFirstTime = true;
 
         float CalculateSpan(Vector2 v1, Vector2 v2)
         {
@@ -406,7 +409,6 @@ namespace HannaRoads
                 endRef.UpdateMeshVerts();
             }
 
-
         }
 
 
@@ -503,7 +505,7 @@ namespace HannaRoads
                     if (i == 0 && startRef.previousRSegment == null)
                     {
                         vertexColors.Add(Color.red);
-                        Debug.Log(s);
+
                     }
                     else if (i == resolution && endRef.rSegment == null)
                     {

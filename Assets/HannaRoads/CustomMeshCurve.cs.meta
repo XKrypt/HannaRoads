@@ -11,7 +11,7 @@ MonoImporter:
   - material: {fileID: 2100000, guid: ae8005aed327f744c86d45b741290d78, type: 2}
   - hannaIntersection: {instanceID: 0}
   executionOrder: 0
-  icon: {instanceID: 0}
+  icon: {fileID: 2800000, guid: c9a8fc81c1ef0014b8bddf2ba468dc95, type: 3}
   userData: 
   assetBundleName: 
   assetBundleVariant: 

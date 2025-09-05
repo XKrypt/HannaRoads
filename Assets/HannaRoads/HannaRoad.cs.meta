@@ -3,7 +3,12 @@ guid: 436c9ed0633806f4f8af46d177e5d1e3
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - activeSegment: {instanceID: 0}
+  - activeIntersection: {instanceID: 0}
+  - lastRSegment: {instanceID: 0}
+  - defaultRoadMaterial: {fileID: 2100000, guid: ec5ac158d3ef2e64b821fc17b47c4617, type: 2}
+  - defaultRoadLineMaterial: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
