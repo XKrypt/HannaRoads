@@ -21,6 +21,9 @@ namespace HannaRoads
         public int maxThreadsPerSegment;
 
 
+        public Material defaultMaterial;
+
+
         public RSegment lastRSegment;
 
 

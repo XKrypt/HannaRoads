@@ -69,7 +69,7 @@ namespace HannaRoads
 
             OrientedPoint orientedPoint = GetBezierPointGlobal(0);
 
-            Handles.DrawLine(orientedPoint.LocalSpace(Vector3.right * ((width / 2) + terrainAlignRadius)), orientedPoint.LocalSpace(Vector3.left * ((width / 2) + terrainAlignRadius)), 2.5f);
+            //Handles.DrawLine(orientedPoint.LocalSpace(Vector3.right * ((width / 2) + terrainAlignRadius)), orientedPoint.LocalSpace(Vector3.left * ((width / 2) + terrainAlignRadius)), 2.5f);
 
             Handles.color = Color.white;
 
@@ -90,6 +90,7 @@ namespace HannaRoads
                         name = "RoadSegment"
                     };
                     meshFilter.sharedMesh = _mesh;
+                    GetComponent<MeshRenderer>().material = hannaRoad.defaultMaterial;
                 }
                 GenerateMeshNVerticesWay(_mesh);
             }
@@ -98,6 +99,8 @@ namespace HannaRoads
             {
                 GenerateRoadLine(ref item.mesh, item);
             }
+
+            UpdateCustomMeshes();
         }
 
         float CalculateSpan(Vector2 v1, Vector2 v2)
@@ -226,6 +229,31 @@ namespace HannaRoads
 
 
 
+        }
+
+        public List<CustomMeshCurve> customMeshs = new List<CustomMeshCurve>();
+        public void AddCustomMeshCurve()
+        {
+            GameObject customMeshObj = new GameObject();
+
+            customMeshObj.transform.SetParent(transform);
+            customMeshObj.transform.localPosition = Vector3.zero;
+
+            customMeshObj.AddComponent<MeshFilter>();
+            customMeshObj.AddComponent<MeshRenderer>();
+            CustomMeshCurve customMesh = customMeshObj.AddComponent<CustomMeshCurve>();
+            customMesh.rSegment = this;
+            customMeshs.Add(customMesh);
+            customMeshObj.name = $"Custom Mesh ({customMeshs.Count})";
+
+        }
+
+        void UpdateCustomMeshes()
+        {
+            foreach (var item in customMeshs)
+            {
+                item.AlignObjetToCurve();
+            }
         }
 
 

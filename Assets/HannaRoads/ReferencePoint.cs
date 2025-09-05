@@ -23,7 +23,6 @@ namespace HannaRoads
 
 
         public HannaRoad hannaRoad;
-        public HannaSidewalk hannaSideWalkEditor;
 
 
 

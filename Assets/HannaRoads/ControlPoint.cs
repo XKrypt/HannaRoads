@@ -16,10 +16,6 @@ namespace HannaRoads
 
         public RSegment rSegment;
 
-
-        bool isSideWalk;
-        public SideWalkSegment sSegment;
-
         public ReferencePoint referencePoint;
 
         private void Update()

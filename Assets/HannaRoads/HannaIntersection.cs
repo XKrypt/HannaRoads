@@ -33,6 +33,25 @@ namespace HannaRoads
 
         public List<Vector3> wordVertices = new List<Vector3>();
 
+        public List<CustomMeshCurve> customMeshs = new List<CustomMeshCurve>();
+
+        public void AddCustomMeshCurve()
+        {
+            GameObject customMeshObj = new GameObject();
+
+            customMeshObj.transform.SetParent(transform);
+            customMeshObj.transform.localPosition = Vector3.zero;
+
+            customMeshObj.AddComponent<MeshFilter>();
+            customMeshObj.AddComponent<MeshRenderer>();
+            CustomMeshCurve customMesh = customMeshObj.AddComponent<CustomMeshCurve>();
+            customMesh.useIntersection = true;
+            customMesh.hannaIntersection = this;
+            customMeshs.Add(customMesh);
+            customMeshObj.name = $"Custom Mesh ({customMeshs.Count})";
+
+        }
+
 
         public AnimationCurve terrainAlignCurve;
         public float terrainAlignRadius = 5f;
@@ -40,6 +59,13 @@ namespace HannaRoads
         public float minAlignDistance = .5f;
         public float terrainBottomMargin = .05f;
         public List<LSideIntersection> intersections = new List<LSideIntersection>();
+        void UpdateCustomMeshes()
+        {
+            foreach (var item in customMeshs)
+            {
+                item.AlignObjetToCurve();
+            }
+        }
 
         public void Generate()
         {
@@ -65,6 +91,7 @@ namespace HannaRoads
             {
                 GenerateMesh();
             }
+            UpdateCustomMeshes();
 
 
         }
