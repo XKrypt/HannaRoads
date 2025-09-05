@@ -70,12 +70,12 @@ namespace HannaRoads
         public void Generate()
         {
             SetVerticesEdgePoints();
-            if (mesh == null || meshFilter != null)
+            if (mesh == null)
             {
                 meshFilter = GetComponent<MeshFilter>();
                 mesh = new Mesh();
-                meshFilter.sharedMesh = mesh;
 
+                GetComponent<MeshRenderer>().sharedMaterial = hannaRoad.defaultRoadMaterial;
             }
 
             if (meshFilter != null)
@@ -86,6 +86,7 @@ namespace HannaRoads
             if (!crossing4)
             {
                 GenerateMesh3Ways();
+                meshFilter.sharedMesh = mesh;
             }
             else
             {

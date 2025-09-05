@@ -92,7 +92,7 @@ namespace HannaRoads
                         name = "RoadSegment"
                     };
                     meshFilter.sharedMesh = _mesh;
-                    GetComponent<MeshRenderer>().material = hannaRoad.defaultMaterial;
+                    GetComponent<MeshRenderer>().sharedMaterial = defaultRoadMaterial;
                 }
                 GenerateMeshNVerticesWay(_mesh);
             }
@@ -505,7 +505,7 @@ namespace HannaRoads
                     if (i == 0 && startRef.previousRSegment == null)
                     {
                         vertexColors.Add(Color.red);
-                        Debug.Log(s);
+
                     }
                     else if (i == resolution && endRef.rSegment == null)
                     {

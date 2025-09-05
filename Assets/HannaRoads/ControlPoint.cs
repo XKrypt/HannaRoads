@@ -42,7 +42,6 @@ namespace HannaRoads
             {
                 if (referencePoint.rSegment != null && referencePoint.previousRSegment != null)
                 {
-                    Debug.Log("Execute");
                     Transform controlPoint = referencePoint.previousRSegment.controlPoints[1].transform;
 
                     float distance = Vector3.Distance(referencePoint.transform.position, controlPoint.position);

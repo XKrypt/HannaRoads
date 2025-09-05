@@ -135,6 +135,9 @@ namespace HannaRoads
                 if (connected)
                 {
                     previousRSegment.start.position = transform.position;
+                    Vector3 pos = previousRSegment.controlPoints[0].transform.position;
+                    pos = pos + (transform.position - lastPosition);
+                    previousRSegment.controlPoints[0].transform.position = pos;
                     previousRSegment.controlPoints[0].UpdatePositions();
                     segmentType = SegmentType.Start;
                 }
@@ -142,6 +145,9 @@ namespace HannaRoads
                 {
                     previousRSegment.end.position = transform.position;
                     segmentType = SegmentType.End;
+                     Vector3 pos = previousRSegment.controlPoints[1].transform.position;
+                    pos = pos + (transform.position - lastPosition);
+                    previousRSegment.controlPoints[1].transform.position = pos;
                     //previousRSegment.controlPoints[1].UpdatePositions();
                 }
 
@@ -161,9 +167,9 @@ namespace HannaRoads
             {
                 foreach (var control in previousRSegment.controlPoints)
                 {
-                    
-                        control.UpdatePositions();
-                   
+
+                    control.UpdatePositions();
+
                 }
             }
 
@@ -179,7 +185,12 @@ namespace HannaRoads
 
         private void OnDrawGizmos()
         {
+            if (segmentType == SegmentType.End)
+            {
+                Gizmos.color = Color.gray;
+            }
             Gizmos.DrawCube(transform.position + (Vector3.up), new Vector3(0.2f, 2, 0.2f));
+            Gizmos.color = Color.white;
         }
 
         public void UpdateMeshVerts()
