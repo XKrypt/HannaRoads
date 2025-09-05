@@ -33,7 +33,9 @@ namespace HannaRoads
 
         public float startOffset = 0;
         public float endOffset = 1;
+        public AnimationCurve widthCurveToNextRSegment;
         public AnimationCurve widthCurve;
+        public float widthProfileMultiplier = 1f;
         public AnimationCurve verticalProfile;
         public Transform start;
         public float verticalProfileMultiplayer = 0f;
@@ -429,7 +431,11 @@ namespace HannaRoads
 
             if (widthCurve == null)
             {
-                widthCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
+                widthCurve = AnimationCurve.Constant(0, 1, 1);
+            }
+            if (widthCurveToNextRSegment == null)
+            {
+                widthCurveToNextRSegment = AnimationCurve.EaseInOut(0, 0, 1, 1);
             }
             if (verticalProfile == null)
             {
@@ -465,20 +471,22 @@ namespace HannaRoads
                     float offsetLerp = Mathf.InverseLerp(startOffset, endOffset, t);
 
                     // Avalia a curva com esse valor normalizado
-                    float curveValue = widthCurve.Evaluate(offsetLerp);
+                    float curveValue = widthCurveToNextRSegment.Evaluate(offsetLerp);
 
                     // Interpola entre largura atual e a próxima
-                    meshWidth = Mathf.Lerp(width, endRef.rSegment.width, curveValue);
+                    meshWidth = Mathf.Lerp(width * widthCurve.Evaluate(t) * widthProfileMultiplier,
+                    endRef.rSegment.width * endRef.rSegment.widthCurve.Evaluate(0) * endRef.rSegment.widthProfileMultiplier,
+                    curveValue);
                 }
                 else if (t > endOffset)
                 {
                     // Já passou do blend: adota a largura final
-                    meshWidth = endRef.rSegment.width;
+                    meshWidth = endRef.rSegment.width * endRef.rSegment.widthCurve.Evaluate(0) * endRef.rSegment.widthProfileMultiplier;
                 }
                 else
                 {
                     // Ainda antes do blend: mantém a largura original
-                    meshWidth = width;
+                    meshWidth = width * widthCurve.Evaluate(t) * widthProfileMultiplier;
                 }
 
 

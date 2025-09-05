@@ -17,6 +17,10 @@ namespace HannaRoads.HannaEditor
             rSegment = target as RSegment;
             if (rSegment.widthCurve == null)
             {
+                rSegment.widthCurve = AnimationCurve.Constant(0, 1, 1);
+            }
+            if (rSegment.widthCurveToNextRSegment == null)
+            {
                 rSegment.widthCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
             }
             if (rSegment.terrainAlignCurve == null)
@@ -31,7 +35,7 @@ namespace HannaRoads.HannaEditor
             EditorGUILayout.LabelField("Shift + E : Connect to active intersection");
             EditorGUI.BeginChangeCheck();
             EditorGUILayout.BeginHorizontal();
-            EditorGUILayout.LabelField("width");
+            EditorGUILayout.LabelField("Width");
             rSegment.width = EditorGUILayout.Slider(rSegment.width, 0.02f, 20);
             EditorGUILayout.EndHorizontal();
 
@@ -59,6 +63,10 @@ namespace HannaRoads.HannaEditor
             EditorGUILayout.EndHorizontal();
 
             EditorGUILayout.BeginHorizontal();
+            rSegment.widthCurveToNextRSegment = EditorGUILayout.CurveField("Width smoothness curve to next segment", rSegment.widthCurveToNextRSegment);
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.BeginHorizontal();
             rSegment.widthCurve = EditorGUILayout.CurveField("Width smoothness curve", rSegment.widthCurve);
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.BeginHorizontal();
@@ -66,8 +74,16 @@ namespace HannaRoads.HannaEditor
             EditorGUILayout.EndHorizontal();
 
             EditorGUILayout.BeginHorizontal();
-            EditorGUILayout.LabelField("Vertical profile multiplier");
-            rSegment.verticalProfileMultiplayer = EditorGUILayout.Slider(rSegment.verticalProfileMultiplayer, -1, 1);
+            EditorGUILayout.LabelField("Width profile multiplier");
+            rSegment.widthProfileMultiplier = EditorGUILayout.Slider(rSegment.widthProfileMultiplier, -5, 5);
+            if (rSegment.widthProfileMultiplier == 0)
+            {
+                rSegment.widthProfileMultiplier = 1;
+            }
+            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("Height profile multiplier");
+            rSegment.verticalProfileMultiplayer = EditorGUILayout.Slider(rSegment.verticalProfileMultiplayer, -5, 5);
             EditorGUILayout.EndHorizontal();
 
             if (GUILayout.Button("Add custom mesh"))
