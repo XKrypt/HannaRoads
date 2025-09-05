@@ -54,12 +54,6 @@ namespace HannaRoads.HannaEditor
             GUILayout.Space(15);
             EditorGUILayout.LabelField("Shape configurations", TitleStyle());
             GUILayout.Space(5);
-
-            EditorGUILayout.BeginHorizontal();
-            EditorGUILayout.LabelField("Start curve offset");
-            rSegment.startOffset = EditorGUILayout.Slider(rSegment.startOffset, 0, 0.99f);
-            EditorGUILayout.EndHorizontal();
-
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("Start curve offset");
             rSegment.startOffset = EditorGUILayout.Slider(rSegment.startOffset, 0, 0.99f);
