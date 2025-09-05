@@ -113,12 +113,13 @@ You probably will need to connect two roads, or create road loops, to do that se
 With Hanna Roads you can make cool things, but let start from the basics.
 
 
-### Road Segment geometry
+### Road Segment geometry customization
 
 When you select a segment you will find some settings:
 
 
 
+![Disconnecting from intersection](imgs/segment_base_settings.png)
 
 
 * Width : Change the width of the road
@@ -127,17 +128,49 @@ When you select a segment you will find some settings:
 
 This is the basic, but only that is boring, let´s make cool stuff!
 
-After basic settings you will see 3 important settings to custom shapes.
+After basic settings you will see a important settings to create custom road shapes.
 
-  * Width smoothness curve
-  * Height smoothness curve
-  * Vertical profile multiplayer
+![segment shape configurations](imgs/segment_shape_configs.png)
 
 
+Ok it´s a lot of settings, let´start with a easy stuff to you understand, lets change height profile.
+
+![segment shape configurations](imgs/changing_vertical_profile.gif)
+
+Wow! the road start to bend!
+This happens because of the height smoothness curve, if you see the curve they are lower at start and high at end, Hanna roads create a shape based on this curve, if you change the curve, the shape of the road will change, with that you can create crazy shapes, you can adjust using vertical multiplier and increasing Horizontal detail level, cool right?
 
 
-If you change vertical profile multiplayer you will see the road starting bend up.
+![segment shape configurations](imgs/playing_with_height_setings.gif)
+
+But we can do more! Lets see what we can make with the width of the road!
+
+If you open Width smoothness curve you will see a constant curve, try to add some key values and make some changes.
+
+
+![segment shape configurations](imgs/playing_with_width_setings.gif)
+
+See that? The width of the road start to change belong the road, the width of the road is affected by this curve, if the curve is constant nothing happens, but if you change they will affect road width, you can adjust more with Width profile multiplier.
 
 
 
-This happens because of the height smoothness curve, if you see the curve they are lower at start and high at end, Hanna roads create a shape based on this curve, if you change the curve, the shape of the road will change, with that you can create crazy shapes, you can adjust using vertical multiplier, cool right?
+
+#### Affecting previous road
+Ok thats great, but if we create another road and change size of the road or other settings that change the shape of the road the previous one will be affected.
+
+
+![segment shape configurations](imgs/affecting_previous_road.gif)
+
+
+
+
+Hanna roads create a blend between some settings of previous road to the next, but you can control that! You se two fields called "Start curve offset" and "End curve offset", this two values controls when the "Width smoothness curve to next" will start and end, this particular field controls the blend between settings of the current road to the next road, such as width, height curve, width curve and etc.
+
+![segment shape configurations](imgs/changing_blend_sentings.gif)
+
+
+if you don´t need road to be affected by the next road, mark "Don´t be affected by the next road width" or "Don´t be affected by the next road height", and the road will not blend to next road.
+
+With that settings you can create amazing and crazy roads!
+
+
