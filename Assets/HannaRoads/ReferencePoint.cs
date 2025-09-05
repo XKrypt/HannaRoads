@@ -12,7 +12,6 @@ namespace HannaRoads
     public class ReferencePoint : MonoBehaviour
     {
         public SegmentType segmentType;
-        public ConnectionType connectionType;
         public RSegment rSegment;
         public RSegment previousRSegment;
 
@@ -38,8 +37,8 @@ namespace HannaRoads
             rSegment = segment;
         }
 
-       [SerializeField] Vector3 lastPosition;
-       [SerializeField] int lastInterIndex;
+        [SerializeField] Vector3 lastPosition;
+        [SerializeField] int lastInterIndex;
 
         private void Update()
         {
@@ -129,7 +128,6 @@ namespace HannaRoads
             if (rSegment != null)
             {
                 rSegment.start.position = transform.position;
-                //rSegment.controlPoints[0].UpdatePositions();
                 segmentType = SegmentType.Start;
             }
             if (previousRSegment != null)
@@ -148,6 +146,28 @@ namespace HannaRoads
                 }
 
             }
+
+
+
+            if (rSegment != null)
+            {
+                foreach (var control in rSegment.controlPoints)
+                {
+                    control.UpdatePositions();
+
+                }
+            }
+            if (previousRSegment != null)
+            {
+                foreach (var control in previousRSegment.controlPoints)
+                {
+                    
+                        control.UpdatePositions();
+                   
+                }
+            }
+
+
             if (rSegment != null) rSegment.Generate();
             if (previousRSegment != null || connected) previousRSegment.Generate();
         }
@@ -158,8 +178,8 @@ namespace HannaRoads
         }
 
         private void OnDrawGizmos()
-        {  
-            Gizmos.DrawCube(transform.position + (Vector3.up), new Vector3(0.2f,2,0.2f));
+        {
+            Gizmos.DrawCube(transform.position + (Vector3.up), new Vector3(0.2f, 2, 0.2f));
         }
 
         public void UpdateMeshVerts()
@@ -215,7 +235,7 @@ namespace HannaRoads
                     for (int i = 0; i < verts.Length; i++)
                     {
                         float t = (float)i / (verts.Length - 1);
-                      
+
                         verts[i] = intersectionAttachment.transform.TransformPoint(Vector3.Lerp(vertA, vertB, t));
 
                     }

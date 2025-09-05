@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 4e46d3577f4bba64aa432533a807a94b
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - rSegment: {instanceID: 0}
+  - meshFilter: {instanceID: 0}
+  - mesh: {instanceID: 0}
+  - originalMesh: {fileID: -462981019419857548, guid: ea6dcca3086589f479cf277adc7906e1, type: 3}
+  - material: {fileID: 2100000, guid: ae8005aed327f744c86d45b741290d78, type: 2}
+  - hannaIntersection: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

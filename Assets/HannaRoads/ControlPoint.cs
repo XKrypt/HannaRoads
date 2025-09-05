@@ -31,6 +31,7 @@ namespace HannaRoads
         public void UpdatePositions()
         {
             rSegment.Generate();
+            referencePoint = segmentType == SegmentType.Start ? rSegment.startRef : rSegment.endRef;
 
             if (referencePoint != null)
             {

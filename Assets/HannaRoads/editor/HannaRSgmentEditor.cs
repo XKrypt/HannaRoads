@@ -70,6 +70,11 @@ namespace HannaRoads.HannaEditor
             rSegment.verticalProfileMultiplayer = EditorGUILayout.Slider(rSegment.verticalProfileMultiplayer, -1, 1);
             EditorGUILayout.EndHorizontal();
 
+            if (GUILayout.Button("Add custom mesh"))
+            {
+                rSegment.AddCustomMeshCurve();
+            }
+
             GUILayout.Space(50);
 
             EditorGUILayout.LabelField("Terrain settings", TitleStyle());
@@ -121,6 +126,7 @@ namespace HannaRoads.HannaEditor
                     Debug.LogWarning("Operation is already in process, wait for it ends to run again");
                 }
             }
+
 
 
             Rect rect = GUILayoutUtility.GetRect(18, 18, "TextField");
