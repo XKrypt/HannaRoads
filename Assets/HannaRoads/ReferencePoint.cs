@@ -55,6 +55,9 @@ namespace HannaRoads
         {
             HannaIntersection intersection = new GameObject().AddComponent<HannaIntersection>();
 
+            intersection.transform.parent = hannaRoad.transform;
+            intersection.hannaRoad = hannaRoad;
+
             intersection.extrusionSize = 1f;
             intersection.size = 0.5f;
             intersection.shape = 0f;
@@ -78,7 +81,6 @@ namespace HannaRoads
                 previousRSegment.endIntersection = intersection;
             }
 
-            intersection.hannaRoad = hannaRoad;
             hannaRoad.activeIntersection = intersection;
         }
 

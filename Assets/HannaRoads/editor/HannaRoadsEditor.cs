@@ -178,10 +178,10 @@ namespace HannaRoads
                     }
                     else
                     {
-                        Handles.color = Color.grey;
+                        Handles.color = Color.white;
                     }
                     //Cria um pequeno cubo que mostra onde a estrada deve começar ou terminar se ja estiver seguindo outra estrada
-                    Handles.DrawWireCube(hit.point, Vector3.one * 0.1f);
+                    Handles.DrawWireCube(hit.point, Vector3.one * 0.4f);
 
                     if (frameEvent.alt)
                     {
