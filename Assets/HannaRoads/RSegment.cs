@@ -64,6 +64,11 @@ namespace HannaRoads
 
         public int sliceResolution = 2;
 
+
+
+        public delegate void OnGenerateMesh();
+        public OnGenerateMesh onGenerateMesh;
+
         public List<Vector3> vertsWorldPos = new List<Vector3>();
         public List<Terrain> terrainsBellowRoad = new List<Terrain>();
         private void OnDrawGizmos()

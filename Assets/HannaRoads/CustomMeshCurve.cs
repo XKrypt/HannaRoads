@@ -1,13 +1,25 @@
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using HannaRoads;
+using UnityEditor;
 using UnityEngine;
 
 public class CustomMeshCurve : MonoBehaviour
 {
     public RSegment rSegment;
+    public RSegment nextRSegment;
+
+    public Vector3 controlAOffset = new Vector3(0, 0, -.5f);
+    public Vector3 controlBOffset = new Vector3(0, 0, .5f);
+
+    public bool useStartOfSegment;
+    public RSegment previousRSegment;
+    public bool useEndOfSegment;
     public Mesh originalMesh;
     public Material material;
+
+    public Transform connectionController;
 
     public HannaIntersection hannaIntersection;
     public bool useIntersection;
@@ -34,8 +46,85 @@ public class CustomMeshCurve : MonoBehaviour
         {
             hannaIntersection.customMeshs.Remove(this);
         }
+
+        if (previousRSegment != null || nextRSegment != null) return;
+        if (previousRSegment.customMeshs.Contains(this))
+        {
+            previousRSegment.customMeshs.Remove(this);
+        }
+        if (nextRSegment.customMeshs.Contains(this))
+        {
+            previousRSegment.customMeshs.Remove(this);
+        }
     }
 
+    public void CreateConnectionCurve()
+    {
+        if (nextRSegment == null || previousRSegment == null || connectionController == null)
+        {
+            return;
+        }
+
+        OrientedPoint start = previousRSegment.GetBezierPointGlobal(useEndOfSegment ? 1 : 0);
+        OrientedPoint end = nextRSegment.GetBezierPointGlobal(useStartOfSegment ? 0 : 1);
+
+        Handles.DrawBezier(GetConnectedCurvePoint(start, end, 0).pos, GetConnectedCurvePoint(start, end, 1).pos, start.rot * controlAOffset + start.pos, end.rot * controlBOffset + end.pos, Color.white, EditorGUIUtility.whiteTexture, 5);
+    }
+
+
+
+    public OrientedPoint GetConnectedCurvePoint(OrientedPoint start, OrientedPoint end, float t)
+    {
+        Vector3 p0 = start.pos;
+        Vector3 p1 = start.rot * controlAOffset + start.pos;
+        Vector3 p2 = end.rot * controlBOffset + end.pos;
+        Vector3 p3 = end.pos;
+
+
+        Vector3 a = Vector3.Lerp(p0, p1, t);
+        Vector3 b = Vector3.Lerp(p1, p2, t);
+        Vector3 c = Vector3.Lerp(p2, p3, t);
+
+
+        Vector3 d = Vector3.Lerp(a, b, t);
+        Vector3 e = Vector3.Lerp(b, c, t);
+
+        Vector3 tangent = (e - d).normalized;
+        // Interpolate the up-vectors of the start and end points to get the up-vector for the curve.
+        Vector3 up = Vector3.Lerp(start.rot * Vector3.up, end.rot * Vector3.up, t).normalized;
+
+        Quaternion rot = Quaternion.LookRotation(tangent, up);
+        return new OrientedPoint()
+        {
+            pos = Vector3.Lerp(d, e, t),
+            rot = rot
+        };
+
+    }
+
+
+
+    public void CheckRegister()
+    {
+        if (previousRSegment == null || nextRSegment == null) return;
+        previousRSegment.customMeshs.Remove(this);
+        nextRSegment.customMeshs.Remove(this);
+        if (!previousRSegment.customMeshs.Contains(this))
+        {
+            previousRSegment.customMeshs.Add(this);
+        }
+        if (!nextRSegment.customMeshs.Contains(this))
+        {
+            nextRSegment.customMeshs.Add(this);
+        }
+
+
+    }
+
+    public void OnGenerate()
+    {
+
+    }
 
     [ContextMenu("HannaCurbstone/AlignObjectToCurve")]
     public void AlignObjetToCurve()
@@ -65,7 +154,10 @@ public class CustomMeshCurve : MonoBehaviour
         // Clear previous children to avoid duplication on multiple runs
         while (transform.childCount > 0)
         {
-            DestroyImmediate(transform.GetChild(0).gameObject);
+            if (transform.GetChild(0).gameObject.name.Contains("Copy"))
+            {
+                DestroyImmediate(transform.GetChild(0).gameObject);
+            }
         }
 
         Bounds bounds = originalMesh.bounds;
@@ -114,7 +206,15 @@ public class CustomMeshCurve : MonoBehaviour
                 }
 
                 Vector3 localSpace = new Vector3(vertex.x, vertex.y, 0);
-                if (useIntersection)
+
+                if (nextRSegment != null && previousRSegment != null)
+                {
+                    OrientedPoint start = previousRSegment.GetBezierPointGlobal(useEndOfSegment ? 1 : 0);
+                    OrientedPoint end = nextRSegment.GetBezierPointGlobal(useStartOfSegment ? 0 : 1);
+                    orientedPoint = GetConnectedCurvePoint(start, end, vertexTPosition);
+                    verticesCurved.Add(currentTransform.InverseTransformPoint(orientedPoint.LocalSpace(localSpace + offset)));
+                }
+                else if (useIntersection)
                 {
                     Vector3 worldPosition = hannaIntersection.transform.TransformPoint(orientedPoint.LocalSpace(localSpace + offset));
                     verticesCurved.Add(currentTransform.InverseTransformPoint(worldPosition));
@@ -175,5 +275,7 @@ public class CustomMeshCurve : MonoBehaviour
         //     }
         //     Gizmos.color = Color.white;
         // }
+        CreateConnectionCurve();
+
     }
 }

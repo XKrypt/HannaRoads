@@ -31,6 +31,33 @@ public class CustomMeshEditor : Editor
             }
         }
 
+
+        customMeshCurve.nextRSegment = (RSegment)EditorGUILayout.ObjectField("Start Road Segment", customMeshCurve.nextRSegment, typeof(RSegment), true);
+        EditorGUILayout.BeginHorizontal();
+        GUILayout.Label("Use the end of the segment insteado of the start");
+        customMeshCurve.useEndOfSegment = EditorGUILayout.Toggle(customMeshCurve.useEndOfSegment);
+        EditorGUILayout.EndHorizontal();
+
+        EditorGUILayout.BeginHorizontal();
+        GUILayout.Label("Use the start of the segment instead of the end");
+        customMeshCurve.useStartOfSegment = EditorGUILayout.Toggle(customMeshCurve.useStartOfSegment);
+        EditorGUILayout.EndHorizontal();
+        customMeshCurve.previousRSegment = (RSegment)EditorGUILayout.ObjectField("End Road Segment", customMeshCurve.previousRSegment, typeof(RSegment), true);
+
+        if (customMeshCurve.nextRSegment != null && customMeshCurve.previousRSegment != null)
+        {
+
+            GUILayout.Label("Control Points");
+            GUILayout.Label("Start control point");
+            customMeshCurve.controlAOffset.x = EditorGUILayout.Slider(customMeshCurve.controlAOffset.x, -5f, 5f);
+            customMeshCurve.controlAOffset.y = EditorGUILayout.Slider(customMeshCurve.controlAOffset.y, -5f, 5f);
+            customMeshCurve.controlAOffset.z = EditorGUILayout.Slider(customMeshCurve.controlAOffset.z, -5f, 5f);
+            GUILayout.Label("End control point");
+            customMeshCurve.controlBOffset.x = EditorGUILayout.Slider(customMeshCurve.controlBOffset.x, -5f, 5f);
+            customMeshCurve.controlBOffset.y = EditorGUILayout.Slider(customMeshCurve.controlBOffset.y, -5f, 5f);
+            customMeshCurve.controlBOffset.z = EditorGUILayout.Slider(customMeshCurve.controlBOffset.z, -5f, 5f);
+        }
+
         GUILayout.Space(5);
         customMeshCurve.originalMesh = (Mesh)EditorGUILayout.ObjectField("Mesh", customMeshCurve.originalMesh, typeof(Mesh), true);
         customMeshCurve.material = (Material)EditorGUILayout.ObjectField("Mesh material", customMeshCurve.material, typeof(Material), true);
@@ -80,13 +107,14 @@ public class CustomMeshEditor : Editor
         EditorGUILayout.EndHorizontal();
         GUILayout.Space(3);
         EditorGUILayout.BeginHorizontal();
-         GUILayout.Label("Number of objects");
+        GUILayout.Label("Number of objects");
         customMeshCurve.objectCount = EditorGUILayout.IntSlider(customMeshCurve.objectCount, 0, 100);
         EditorGUILayout.EndHorizontal();
 
 
         if (EditorGUI.EndChangeCheck())
         {
+            customMeshCurve.CheckRegister();
             customMeshCurve.AlignObjetToCurve();
         }
 

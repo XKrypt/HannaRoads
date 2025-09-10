@@ -111,6 +111,8 @@ namespace HannaRoads
 
                     lastInterIndex = interIndex;
 
+                   
+
                 }
                 return;
             }
@@ -150,7 +152,7 @@ namespace HannaRoads
                      Vector3 pos = previousRSegment.controlPoints[1].transform.position;
                     pos = pos + (transform.position - lastPosition);
                     previousRSegment.controlPoints[1].transform.position = pos;
-                    //previousRSegment.controlPoints[1].UpdatePositions();
+                
                 }
 
             }
@@ -199,30 +201,7 @@ namespace HannaRoads
         {
 
 
-            // if (previousRSegment != null && rSegment != null)
-            // {
-            //     rSegment.controlPoints[0].referencePoint = this;
-            //     previousRSegment.controlPoints[1].referencePoint = this;
-
-
-            //     if (connected)
-            //     {
-            //         Vector3[] vertices = rSegment.GetFirstVertices();
-
-            //         previousRSegment.SetFirstVertices(vertices[1], vertices[0]);
-            //         return;
-            //     }
-
-            //     Vector3[] verts = rSegment.GetFirstVertices();
-
-            //     previousRSegment.SetLastVertices(verts[1], verts[0]);
-            // }
-
-
-            //TODO Fazer umm lerp da direita pra esquerda
-            //TODO Outro lerp e controles da curvatura da estrada no eixo y para ficar no eixo 0 Obs: tanto para o inicio, quanto para o final
-            //TODO Fazer o mesmo para a conexão de estrada que tenha curvas no eixo y diferentes
-            // curvatura y da estrada atual -> curvatura y da próxima estrada 
+        
             if (intersectionAttachment != null)
             {
 
@@ -254,7 +233,6 @@ namespace HannaRoads
                     }
                     previousRSegment.SetLastVertices(verts);
                 }
-
 
 
             }

@@ -53,6 +53,26 @@ namespace HannaRoads
         }
 
 
+        public IntersectionAttachment Connect(int index, ReferencePoint reference)
+        {
+
+            if (index > intersectionPoints.Length || index < 0)
+            {
+                return default;
+            }
+            IntersectionAttachment intersectionAttachment = intersectionPoints[index];
+            intersectionAttachment.referencePoint = reference;
+
+            return intersectionAttachment;
+        }
+
+        public void Disconnect(int index)
+        {
+            IntersectionAttachment intersectionAttachment = intersectionPoints[index];
+            intersectionAttachment.referencePoint = null;
+        }
+
+
         public AnimationCurve terrainAlignCurve;
         public float terrainAlignRadius = 5f;
         public float maxAlignDistance = 5f;
@@ -690,9 +710,8 @@ namespace HannaRoads
 
     public struct IntersectionAttachment
     {
-
         public Vector3 middlePoint;
-
+        public ReferencePoint referencePoint;
         public Vector3 leftPoint;
         public Vector3 rightPoint;
 
