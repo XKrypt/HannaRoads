@@ -518,6 +518,10 @@ namespace HannaRoads
                     // Posição local no plano horizontal da estrada
                     Vector3 lateral = Vector3.Lerp(Vector3.left, Vector3.right, sliceT) * (totalWidth / 2f);
 
+
+
+                    //TODO: Add blend to the vertices based on a value.
+
                     // Se quiser curvar no Y, adicione um offset aqui com curva
                     if (i == 0 && startRef.previousRSegment == null)
                     {
