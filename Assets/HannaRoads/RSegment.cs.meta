@@ -3,7 +3,18 @@ guid: 692615f52190f2a41aaf32808c8b5883
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - _mesh: {instanceID: 0}
+  - hannaRoad: {instanceID: 0}
+  - meshFilter: {instanceID: 0}
+  - endIntersection: {instanceID: 0}
+  - startIntersection: {instanceID: 0}
+  - start: {instanceID: 0}
+  - end: {instanceID: 0}
+  - defaultRoadMaterial: {instanceID: 0}
+  - defaultRoadLineMaterial: {fileID: 2100000, guid: ce79596447c25504588c2b4d7162bb5c, type: 2}
+  - startRef: {instanceID: 0}
+  - endRef: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

@@ -32,7 +32,7 @@ namespace HannaRoads.HannaEditor
         {
 
 
-            EditorGUILayout.LabelField("Shift + E : Connect to active intersection");
+            EditorGUILayout.LabelField("Shift + E to connect to active intersection");
             EditorGUI.BeginChangeCheck();
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("Width");
@@ -125,17 +125,7 @@ namespace HannaRoads.HannaEditor
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.Space(2);
 
-
-
-            // EditorGUILayout.BeginHorizontal();
-            // EditorGUILayout.LabelField("Align  max distance");
-            // rSegment.maxAlignDistance = EditorGUILayout.Slider(rSegment.maxAlignDistance, rSegment.minAlignDistance + 0.05f, rSegment.terrainAlignRadius);
-            // EditorGUILayout.EndHorizontal();
-
-            // EditorGUILayout.BeginHorizontal();
-            // EditorGUILayout.LabelField("Align min distance");
-            // rSegment.minAlignDistance = EditorGUILayout.Slider(rSegment.minAlignDistance, 0, rSegment.maxAlignDistance - 0.05f);
-            // EditorGUILayout.EndHorizontal();
+           
 
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("Bottom margin");
@@ -143,9 +133,6 @@ namespace HannaRoads.HannaEditor
             EditorGUILayout.EndHorizontal();
 
 
-            // EditorGUILayout.BeginHorizontal();
-            // rSegment.terrainAlignCurve = EditorGUILayout.CurveField("Align smoothness curve", rSegment.terrainAlignCurve);
-            // EditorGUILayout.EndHorizontal();
 
             if (GUILayout.Button("Align terrain"))
             {
@@ -161,7 +148,7 @@ namespace HannaRoads.HannaEditor
 
 
 
-            Rect rect = GUILayoutUtility.GetRect(18, 18, "TextField");
+            Rect rect = GUILayoutUtility.GetRect(18, 18);
             EditorGUI.ProgressBar(rect, rSegment.alignTerrainProgress, $"{(int)(rSegment.alignTerrainProgress)}%");
 
 
@@ -261,7 +248,7 @@ namespace HannaRoads.HannaEditor
 
                 EditorGUILayout.LabelField(roadLine.gameObject.name, TitleStyle(14));
                 EditorGUILayout.BeginHorizontal();
-                EditorGUILayout.LabelField("width");
+                EditorGUILayout.LabelField("Width");
                 roadLine.width = EditorGUILayout.Slider(roadLine.width, 0.02f, 20);
                 EditorGUILayout.EndHorizontal();
 
@@ -281,28 +268,28 @@ namespace HannaRoads.HannaEditor
 
                 EditorGUILayout.BeginHorizontal();
                 EditorGUILayout.LabelField("Detail Level");
-                roadLine.detailLevel = EditorGUILayout.IntSlider(roadLine.detailLevel, 1, 200);
+                roadLine.detailLevel = EditorGUILayout.IntSlider(roadLine.detailLevel, 2, 200);
                 EditorGUILayout.EndHorizontal();
 
                 EditorGUILayout.BeginHorizontal();
                 EditorGUILayout.LabelField("Start");
-                roadLine.start = EditorGUILayout.Slider(roadLine.start, 0, 1);
+                roadLine.start = EditorGUILayout.Slider(roadLine.start, 0, roadLine.end -0.3f);
                 EditorGUILayout.EndHorizontal();
 
                 EditorGUILayout.BeginHorizontal();
                 EditorGUILayout.LabelField("End");
-                roadLine.end = EditorGUILayout.Slider(roadLine.end, 1, 0);
+                roadLine.end = EditorGUILayout.Slider(roadLine.end, 1, roadLine.start + 0.3f);
                 EditorGUILayout.EndHorizontal();
 
 
-                EditorGUILayout.BeginHorizontal();
-                roadLine.widthProfile = EditorGUILayout.CurveField("Width smoothness curve", roadLine.widthProfile);
-                EditorGUILayout.EndHorizontal();
+                // EditorGUILayout.BeginHorizontal();
+                // roadLine.widthProfile = EditorGUILayout.CurveField("Width smoothness curve", roadLine.widthProfile);
+                // EditorGUILayout.EndHorizontal();
 
 
                 EditorGUILayout.BeginHorizontal();
-                EditorGUILayout.LabelField("Detail Level");
-                roadLine.sliceResolution = EditorGUILayout.IntSlider(roadLine.sliceResolution, 1, 200);
+                EditorGUILayout.LabelField("Horizontal resolution");
+                roadLine.sliceResolution = EditorGUILayout.IntSlider(roadLine.sliceResolution, 2, 200);
                 EditorGUILayout.EndHorizontal();
 
                 EditorGUILayout.BeginHorizontal();
@@ -310,7 +297,7 @@ namespace HannaRoads.HannaEditor
                 EditorGUILayout.EndHorizontal();
 
                 EditorGUILayout.BeginHorizontal();
-                EditorGUILayout.LabelField("Vertical profile multiplayer");
+                EditorGUILayout.LabelField("Vertical profile multiplier");
                 roadLine.verticalProfileMultiplayer = EditorGUILayout.Slider(roadLine.verticalProfileMultiplayer, -1, 1);
                 EditorGUILayout.EndHorizontal();
 
@@ -352,6 +339,8 @@ namespace HannaRoads.HannaEditor
                 roadLine.widthProfile = AnimationCurve.EaseInOut(0, 0, 1, 1);
                 roadLine.start = 0;
                 roadLine.end = 1;
+
+                roadLine.meshRenderer.sharedMaterial = rSegment.defaultRoadLineMaterial;
 
                 roadLine.rSegment = rSegment;
 

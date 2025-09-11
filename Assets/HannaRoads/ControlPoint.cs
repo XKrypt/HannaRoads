@@ -46,10 +46,10 @@ namespace HannaRoads
 
                     float distance = Vector3.Distance(referencePoint.transform.position, controlPoint.position);
 
-                    // Direção do ponto que foi movido até o centro (oposto ao que foi movido)
+                  
                     Vector3 direction = (referencePoint.transform.position - transform.position).normalized;
 
-                    // Nova posição do ponto oposto (mesma distância, direção oposta)
+                 
                     controlPoint.position = referencePoint.transform.position + direction * distance;
 
 
@@ -66,10 +66,10 @@ namespace HannaRoads
 
                     float distance = Vector3.Distance(referencePoint.transform.position, controlPoint.position);
 
-                    // Direção do ponto que foi movido até o centro (oposto ao que foi movido)
+                 
                     Vector3 direction = (referencePoint.transform.position - transform.position).normalized;
 
-                    // Nova posição do ponto oposto (mesma distância, direção oposta)
+                  
                     controlPoint.position = referencePoint.transform.position + direction * distance;
 
                 }

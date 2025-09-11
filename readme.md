@@ -1,6 +1,10 @@
 # Hanna Roads System
 
-This is a Unity road system, with which you can build amazing roads with a lot of features!
+This is a Unity road system, with which you can build amazing roads with a lot of features! and it´s free!
+
+
+### WARNING
+The system does not currently have a LOD (Level of Detail) system. You may encounter some issues, so please use it with caution.
 
 ## Summary
 * [How to use](#how-to-use)
@@ -15,9 +19,11 @@ This is a Unity road system, with which you can build amazing roads with a lot o
   * [Road Segment Geometry Customization](#road-segment-geometry-customization)
   * [Affecting the previous road](#affecting-the-previous-road)
 * [Terrain](#terrain)
+* [Road Lines](#road-lines)
 * [Custom Meshes](#custom-meshes)
   * [Connecting a Custom Mesh between two segments](#connecting-a-custom-mesh-between-two-segments)
 * [Road Objects](#road-objects)
+* [Shaders and vertex colors](#shader-and-vertex-colors)
 
 ## How to use
 
@@ -178,16 +184,39 @@ With these settings, you can create amazing and crazy roads!
 
 ### Terrain
 
-Roads need to be aligned with the terrain, as we know. Let's see how to do it.
-When you select a road, you will find a section called **"Terrain Settings"**.
+For roads to blend naturally into your scene, they need to be aligned with the terrain. Here's how to achieve that. When you select a road segment, you will find the **"Terrain Settings"** section in its Inspector.
 
 ![terrain settings](imgs/terrain_settings.png)
 
-* **Align Radius**: The radius of the alignment.
-* **Ignore From Road System Terrain Update**: Will ignore this segment when you press "Align all roads" in the Hanna Roads object.
-* **Bottom Margin**: The margin between the road and the terrain.
+*   **Align Radius**: Controls the width of the area around the road that will be flattened to match its height.
+*   **Ignore From Road System Terrain Update**: If checked, this segment will be skipped when using the global "Align all roads" function from the main Hanna Roads object.
+*   **Bottom Margin**: The vertical distance to maintain between the road and the terrain. A positive value lowers the terrain relative to the road.
 
-The **"Align Terrain"** button will align the terrain with the road using a margin. Sometimes it may not work as expected, so you might need to make small adjustments to the terrain manually.
+The **"Align Terrain"** button modifies the terrain underneath the selected segment based on these settings. While this process is generally effective, some minor manual adjustments to the terrain might be needed for perfect results.
+
+
+### Road Lines
+
+Road lines are meshes generated to create lines on the road or other elements like road shoulders. Let's create one!
+
+Select a segment and press "Add Road Line". An additional mesh will appear on the road, and you will see the following settings for the newly created road line:
+
+![nice side walk](imgs/road_line_settings.png)
+
+*   **Width**: Controls the width of the road line.
+*   **Horizontal Offset**: Creates a horizontal offset from the center of the road.
+*   **Vertical Offset**: Creates a vertical offset from the surface of the road.
+*   **Detail Level**: The number of cuts along the length of the road line.
+*   **Start**: Defines where the road line begins on the road segment's curve (from 0 to 1).
+*   **End**: Defines where the road line finishes on the road segment's curve (from 0 to 1).
+*   **Horizontal Resolution**: The number of horizontal cuts across the width of the road line.
+*   **Vertical Profile**: A curve that defines the height profile across the width of the road line.
+*   **Vertical Multiplier**: Multiplies the effect of the vertical profile curve.
+
+![nice side walk](imgs/playing_road_line_settings.gif)
+
+You can select the Road Line GameObject (which is a child of the segment) and assign a different material to it. You can also adjust its offset and profile to create elements like a road shoulder.
+
 
 ### Custom Meshes
 
@@ -275,14 +304,15 @@ If you want an object to follow a segment, you can add the **RoadObject** script
 
 ### Shader and Vertex Colors
 
-When the road are created Hanna Roads apply colors to vertices so you can use in you shaders,
-the first vertices have red color and last have blue color, if the segment is attached to another segment, they will not apply the vertex color on start or end depending where the other segment is connected.
+When roads are created, Hanna Roads applies colors to the vertices so you can use them in your shaders. The first vertices of a segment are colored red and the last are colored blue. If a segment is attached to another segment, the vertex color will not be applied at the start or end, depending on where the other segment is connected.
 
-In the Hanna roads Shaders folder you will find a shader called "RoadEdgesMask", this shader create a mask at the start, end and the edges of 
-the road.
+In the Hanna Roads Shaders folder, you will find a shader called "RoadEdgesMask". This shader creates a mask at the start, end, and edges of the road.
+
 ![nice side walk](imgs/edges_shader_mask.png)
+
+### WARNING
+*Road lines and intersections don´t have vertex colors!*
 
 If you find any issues or problems, feel free to create an issue. Contributions are welcome!
 If you make a nice road, send it to me! It would be great to put amazing images as showcases here!
 That's it! A nice road system, free and open-source! Thanks, guys, and see you in the next updates!
-

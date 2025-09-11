@@ -154,27 +154,25 @@ namespace HannaRoads
         {
 
 
-            // A, B e C são os três pontos da curva de Bézier quadrática.
-            // O ponto B é o ponto de controle central.
+           
             Vector3 A = lSide.subPoint1;
-            Vector3 B = lSide.mainPoint * (shape + 1); // Assumindo que este já é o ponto de controle.
+            Vector3 B = lSide.mainPoint * (shape + 1);
             Vector3 C = lSide.subPoint2;
 
-            // Interpolações de primeira ordem
+         
             Vector3 aBLerp = Vector3.Lerp(A, B, t);
             Vector3 bCLerp = Vector3.Lerp(B, C, t);
 
-            // Posição final da curva (interpolação de segunda ordem)
+        
             Vector3 finalPos = Vector3.Lerp(aBLerp, bCLerp, t);
 
-            // Tangente da curva no ponto 't'
-            // O vetor de direção entre os pontos intermediários
+          
             Vector3 tangent = (bCLerp - aBLerp).normalized;
 
-            // Rotação baseada na tangente e no vetor 'up' do objeto
+         
             Quaternion rot = Quaternion.LookRotation(tangent, transform.up.normalized);
 
-            // Retorna o OrientedPoint completo
+       
             return new OrientedPoint()
             {
                 pos = finalPos,
