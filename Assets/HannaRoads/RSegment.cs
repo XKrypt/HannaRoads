@@ -35,16 +35,19 @@ namespace HannaRoads
         public List<RoadObject> objectsAlongRoad = new List<RoadObject>();
         [SerializeField] public List<RoadLine> roadLines = new List<RoadLine>();
 
-        public float startOffset = 0;
-        public float endOffset = 1;
+
         public AnimationCurve widthCurveToNextRSegment;
         public AnimationCurve widthCurve;
-        public float widthProfileMultiplier = 1f;
         public AnimationCurve verticalProfile;
-        public Transform start;
-        public float verticalProfileMultiplayer = 0f;
-        public Transform end;
 
+        public float startOffset = 0;
+        public float endOffset = 1;
+        public float widthProfileMultiplier = 1f;
+        public float verticalProfileMultiplayer = 0f;
+
+
+        public Transform start;
+        public Transform end;
         public Material defaultRoadMaterial;
 
         public float width = 1;
@@ -81,9 +84,6 @@ namespace HannaRoads
             );
 
             OrientedPoint orientedPoint = GetBezierPointGlobal(0);
-
-            //Handles.DrawLine(orientedPoint.LocalSpace(Vector3.right * ((width / 2) + terrainAlignRadius)), orientedPoint.LocalSpace(Vector3.left * ((width / 2) + terrainAlignRadius)), 2.5f);
-
             Handles.color = Color.white;
 
 
@@ -303,124 +303,7 @@ namespace HannaRoads
 
             return false;
         }
-        void GenerateMesh(Mesh mesh)
-        {
-
-
-            if (mesh == null)
-            {
-
-                mesh = new Mesh() { name = "RoadSegment" };
-
-                meshFilter.sharedMesh = mesh;
-
-            }
-
-            mesh.Clear();
-
-            vertsWorldPos.Clear();
-
-            if (widthCurve == null)
-            {
-                widthCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
-            }
-
-            //Generate vertices
-            List<Vector3> vertices = new List<Vector3>();
-            List<Vector3> normals = new List<Vector3>();
-            List<Vector2> uvs = new List<Vector2>();
-
-
-            int resolution = detailLevel;
-
-            for (int i = 0; i < resolution + 1; i++)
-            {
-                float t = i / (float)(resolution);
-                OrientedPoint bezierPoint = GetBezierPoint(t);
-
-                float meshWidth = width;
-
-
-                if (endRef.rSegment != null && t >= startOffset && t <= endOffset)
-                {
-                    // Normaliza o t entre startOffset e endOffset para gerar um valor de 0 a 1
-                    float offsetLerp = Mathf.InverseLerp(startOffset, endOffset, t);
-
-                    // Avalia a curva com esse valor normalizado
-                    float curveValue = widthCurve.Evaluate(offsetLerp);
-
-                    // Interpola entre largura atual e a próxima
-                    meshWidth = Mathf.Lerp(width, endRef.rSegment.width, curveValue);
-                }
-                else if (t > endOffset)
-                {
-                    // Já passou do blend: adota a largura final
-                    meshWidth = endRef.rSegment.width;
-                }
-                else
-                {
-                    // Ainda antes do blend: mantém a largura original
-                    meshWidth = width;
-                }
-
-
-                Vector3 rightVertex = Vector3.right * (meshWidth / 2);
-                Vector3 leftVertex = Vector3.left * (meshWidth / 2);
-                Vector3 vA = bezierPoint.LocalSpace(rightVertex);
-                Vector3 vB = bezierPoint.LocalSpace(leftVertex);
-
-                vertices.Add(vA);
-                vertices.Add(vB);
-
-
-                vertsWorldPos.Add(transform.TransformPoint(vA));
-                vertsWorldPos.Add(transform.TransformPoint(vB));
-
-                normals.Add(bezierPoint.LocalToWorldVector(Vector3.up));
-                normals.Add(bezierPoint.LocalToWorldVector(Vector3.up));
-
-                uvs.Add(new Vector2(0, t * GetApproxLength(resolution) / CalculateSpan(rightVertex, leftVertex)));
-                uvs.Add(new Vector2(1, t * GetApproxLength(resolution) / CalculateSpan(rightVertex, leftVertex)));
-            }
-
-
-            List<int> triangles = new List<int>();
-            //Generate triangles
-            for (int i = 0; i < (resolution * 2) - 1; i++)
-            {
-
-                int rootVertex = i;
-                triangles.Add(rootVertex + 2);
-                triangles.Add(rootVertex);
-                triangles.Add(rootVertex + 1);
-
-
-
-                triangles.Add(rootVertex + 3);
-                triangles.Add(rootVertex + 2);
-                triangles.Add(rootVertex + 1);
-
-            }
-
-
-
-
-            mesh.SetVertices(vertices);
-            mesh.SetNormals(normals);
-            mesh.SetTriangles(triangles, 0);
-            mesh.SetUVs(0, uvs);
-
-            if (startRef != null)
-            {
-                startRef.UpdateMeshVerts();
-            }
-
-            if (endRef != null)
-            {
-                endRef.UpdateMeshVerts();
-            }
-
-        }
+       
 
 
         void GenerateMeshNVerticesWay(Mesh mesh)
@@ -456,7 +339,7 @@ namespace HannaRoads
                 sliceResolution = 2;
             }
 
-            //Generate vertices
+         
             List<Vector3> vertices = new List<Vector3>();
             List<Vector3> normals = new List<Vector3>();
             List<Vector2> uvs = new List<Vector2>();
@@ -476,32 +359,32 @@ namespace HannaRoads
 
                 if (endRef.rSegment != null && t >= startOffset && t <= endOffset && !dontBeAffectedForNextRoadWidthShape)
                 {
-                    // Normaliza o t entre startOffset e endOffset para gerar um valor de 0 a 1
+                  
                     float offsetLerp = Mathf.InverseLerp(startOffset, endOffset, t);
 
-                    // Avalia a curva com esse valor normalizado
+                   
                     float curveValue = widthCurveToNextRSegment.Evaluate(offsetLerp);
 
-                    // Interpola entre largura atual e a próxima
+                   
                     meshWidth = Mathf.Lerp(width * widthCurve.Evaluate(t) * widthProfileMultiplier,
                     endRef.rSegment.width * endRef.rSegment.widthCurve.Evaluate(0) * endRef.rSegment.widthProfileMultiplier,
                     curveValue);
                 }
                 else if (t > endOffset && !dontBeAffectedForNextRoadWidthShape && endRef.rSegment != null)
                 {
-                    // Já passou do blend: adota a largura final
+                 
                     meshWidth = endRef.rSegment.width * endRef.rSegment.widthCurve.Evaluate(0) * endRef.rSegment.widthProfileMultiplier;
                 }
                 else
                 {
-                    // Ainda antes do blend: mantém a largura original
+                  
                     meshWidth = width * widthCurve.Evaluate(t) * widthProfileMultiplier;
                 }
 
 
                 for (int s = 0; s < sliceResolution; s++)
                 {
-                    float sliceT = s / (float)(sliceResolution - 1); // de 0 (left) até 1 (right)
+                    float sliceT = s / (float)(sliceResolution - 1); 
                     float verticalProfileEnd = verticalProfile.Evaluate(sliceT);
                     float finalVerticalMultiplier = verticalProfileMultiplayer;
                     if (endRef.rSegment != null && !dontBeAffectedForNextRoadHeightShape)
@@ -512,17 +395,17 @@ namespace HannaRoads
                         finalVerticalMultiplier = Mathf.Lerp(verticalProfileMultiplayer, endRef.rSegment.verticalProfileMultiplayer, t);
                     }
 
-                    // Largura total da pista:
+             
                     float totalWidth = meshWidth;
 
-                    // Posição local no plano horizontal da estrada
+                
                     Vector3 lateral = Vector3.Lerp(Vector3.left, Vector3.right, sliceT) * (totalWidth / 2f);
 
 
 
                     //TODO: Add blend to the vertices based on a value.
 
-                    // Se quiser curvar no Y, adicione um offset aqui com curva
+              
                     if (i == 0 && startRef.previousRSegment == null)
                     {
                         vertexColors.Add(Color.red);
@@ -543,17 +426,11 @@ namespace HannaRoads
                     Vector3 worldPoint = bezierPoint.LocalSpace(lateral);
                     vertices.Add(worldPoint);
 
-                    normals.Add(bezierPoint.LocalToWorldVector(Vector3.up)); // ou normal baseada na inclinação
-                    uvs.Add(new Vector2(sliceT, t * GetApproxLength(resolution) / uSpan)); // UVs bem mapeados
+                    normals.Add(bezierPoint.LocalToWorldVector(Vector3.up)); 
+                    uvs.Add(new Vector2(sliceT, t * GetApproxLength(resolution) / uSpan)); 
                 }
 
-                // Vector3 rightVertex = Vector3.right * (terrainAlignRadius / 2);
-                // Vector3 leftVertex = Vector3.left * (terrainAlignRadius / 2);
-                // Vector3 vA = bezierPoint.LocalSpace(rightVertex);
-                // Vector3 vB = bezierPoint.LocalSpace(leftVertex);
-
-                // DetectTerrain(vA);
-                // DetectTerrain(vB);
+    
             }
 
 
@@ -723,7 +600,7 @@ namespace HannaRoads
 
             List<int> triangles = new List<int>();
             //Generate triangles
-            for (int i = 0; i < resolution; i++)
+            for (int i = 0; i < localResolution; i++)
             {
                 for (int j = 0; j < segmentMesh.sliceResolution - 1; j++)
                 {
