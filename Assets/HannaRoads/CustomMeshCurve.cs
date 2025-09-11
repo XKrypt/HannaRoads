@@ -130,7 +130,7 @@ public class CustomMeshCurve : MonoBehaviour
     public void AlignObjetToCurve()
     {
 
-        if (rSegment == null && hannaIntersection == null)
+        if (rSegment == null && hannaIntersection == null && nextRSegment == null && previousRSegment == null)
         {
             Debug.LogError("No rSegment  or intersection Attached is not assigned.", this);
             return;
@@ -242,7 +242,14 @@ public class CustomMeshCurve : MonoBehaviour
         void AdjustPosition()
         {
 
-            if (useIntersection && hannaIntersection != null)
+            if (nextRSegment != null && previousRSegment != null)
+            {
+                OrientedPoint start = previousRSegment.GetBezierPointGlobal(useEndOfSegment ? 1 : 0);
+                OrientedPoint end = nextRSegment.GetBezierPointGlobal(useStartOfSegment ? 0 : 1);
+                transform.position = GetConnectedCurvePoint(start, end, 0.5f).pos;
+                
+            }
+            else if (useIntersection && hannaIntersection != null)
             {
                 transform.localPosition = hannaIntersection.BevelSideOrientedPoint(hannaIntersection.intersections[intersectionIndex], 0.5f).pos;
             }

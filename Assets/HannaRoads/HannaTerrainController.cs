@@ -28,7 +28,7 @@ public class HannaTerrainController : MonoBehaviour
         TerrainData data = terrain.terrainData;
         int resolution = data.heightmapResolution;
 
-        // Altura normalizada
+       
         float normalizedHeight = ((worldPoint - terrain.transform.position).y - bottomMargin) / data.size.y;
 
         Vector3 center = worldPoint;
@@ -36,14 +36,14 @@ public class HannaTerrainController : MonoBehaviour
 
         TerrainVector2 posInTerrainSpace = ConvertFromWordPositionToTerrainPosition(terrain, center);
 
-        // Define tamanho do quadrado em volta do ponto central
+       
         int halfSize = Mathf.RoundToInt((radius / data.size.x) * (resolution - 1));
 
 
         int width = halfSize * 2 + 1;
         int height = halfSize * 2 + 1;
 
-        //Move para que base x e y para que o ponto  fique bem no meio.
+     
         int xBase = Mathf.Clamp(posInTerrainSpace.x - halfSize, 0, resolution - width);
         int zBase = Mathf.Clamp(posInTerrainSpace.z - halfSize, 0, resolution - height);
 
@@ -64,7 +64,7 @@ public class HannaTerrainController : MonoBehaviour
                 }
                 else if (dist <= maxDistance)
                 {
-                    float t = Mathf.InverseLerp(maxDistance, minDistance, dist); // suavizado
+                    float t = Mathf.InverseLerp(maxDistance, minDistance, dist); 
                     heights[z, x] = Mathf.Lerp(heights[z, x], normalizedHeight, animationCurve.Evaluate(t));
                 }
             }

@@ -38,24 +38,47 @@ public class CustomMeshEditor : Editor
         customMeshCurve.useEndOfSegment = EditorGUILayout.Toggle(customMeshCurve.useEndOfSegment);
         EditorGUILayout.EndHorizontal();
 
+        customMeshCurve.previousRSegment = (RSegment)EditorGUILayout.ObjectField("End Road Segment", customMeshCurve.previousRSegment, typeof(RSegment), true);
         EditorGUILayout.BeginHorizontal();
         GUILayout.Label("Use the start of the segment instead of the end");
         customMeshCurve.useStartOfSegment = EditorGUILayout.Toggle(customMeshCurve.useStartOfSegment);
         EditorGUILayout.EndHorizontal();
-        customMeshCurve.previousRSegment = (RSegment)EditorGUILayout.ObjectField("End Road Segment", customMeshCurve.previousRSegment, typeof(RSegment), true);
 
         if (customMeshCurve.nextRSegment != null && customMeshCurve.previousRSegment != null)
         {
 
             GUILayout.Label("Control Points");
             GUILayout.Label("Start control point");
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.Label("Start control point X");
             customMeshCurve.controlAOffset.x = EditorGUILayout.Slider(customMeshCurve.controlAOffset.x, -5f, 5f);
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.Label("Start control point Y");
             customMeshCurve.controlAOffset.y = EditorGUILayout.Slider(customMeshCurve.controlAOffset.y, -5f, 5f);
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.Label("Start control point Z");
             customMeshCurve.controlAOffset.z = EditorGUILayout.Slider(customMeshCurve.controlAOffset.z, -5f, 5f);
+            EditorGUILayout.EndHorizontal();
+
+
             GUILayout.Label("End control point");
+
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.Label("End control point X");
             customMeshCurve.controlBOffset.x = EditorGUILayout.Slider(customMeshCurve.controlBOffset.x, -5f, 5f);
+            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.Label("End control point Y");
             customMeshCurve.controlBOffset.y = EditorGUILayout.Slider(customMeshCurve.controlBOffset.y, -5f, 5f);
+            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.Label("End control point Z");
             customMeshCurve.controlBOffset.z = EditorGUILayout.Slider(customMeshCurve.controlBOffset.z, -5f, 5f);
+            EditorGUILayout.EndHorizontal();
         }
 
         GUILayout.Space(5);
