@@ -77,12 +77,13 @@ namespace HannaRoads
         }
         private void OnDrawGizmos()
         {
-            Gizmos.color = Color.green;
+            Gizmos.color = new Color(250 / 255f, 55 / 255f,0);
             Gizmos.DrawLine(transform.position, root.position);
 
-            // if (root == null) return;
-            // Gizmos.DrawCube(transform.position, Vector3.one * 0.2f);
-            // Gizmos.color = Color.white;
+            
+            Gizmos.color = new Color(250 / 255f, 55 / 255f,0);
+            Gizmos.DrawSphere(transform.position, 0.5f);
+            Gizmos.color = Color.white;
 
         }
     }

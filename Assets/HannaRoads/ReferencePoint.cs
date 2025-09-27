@@ -189,11 +189,13 @@ namespace HannaRoads
 
         private void OnDrawGizmos()
         {
+             Gizmos.color = new Color(250 / 255f, 55 / 255f,0);
             if (segmentType == SegmentType.End)
             {
-                Gizmos.color = Color.gray;
+                Gizmos.color = new Color(120 / 255f, 27 / 255f, 0);
             }
-            Gizmos.DrawCube(transform.position + (Vector3.up), new Vector3(0.2f, 2, 0.2f));
+            
+            Gizmos.DrawCube(transform.position, new Vector3(1f, 0.4f, 1f));
             Gizmos.color = Color.white;
         }
 
